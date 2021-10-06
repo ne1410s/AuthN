@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using AuthN.Domain.Exceptions;
 using AuthN.Domain.Models.Request;
 using AuthN.Domain.Models.Storage;
+using AuthN.Domain.Services.Security;
 using AuthN.Domain.Services.Storage;
 using AuthN.Domain.Services.Validation;
 
@@ -72,6 +73,8 @@ namespace AuthN.Domain.Services.Orchestration
         private static AuthNUser MapToNewUser(LegacyRegistrationRequest request)
         {
             var utcNow = DateTime.UtcNow;
+            var saltBytes = Guid.NewGuid().ToByteArray();
+            var salt = Convert.ToBase64String(saltBytes);
             return new AuthNUser
             {
                 ActivationCode = Guid.NewGuid(),
@@ -80,9 +83,9 @@ namespace AuthN.Domain.Services.Orchestration
                 Forename = request.Forename,
                 Surname = request.Surname,
                 RegistrationEmail = request.Email.ToLower(),
-                Username = request.Username, 
-                // salt
-                // hash
+                Username = request.Username,
+                PasswordSalt = salt,
+                PasswordHash = request.Password.Hash(salt),
             };
         }
     }

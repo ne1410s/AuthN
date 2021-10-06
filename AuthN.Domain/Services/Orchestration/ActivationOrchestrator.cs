@@ -21,7 +21,7 @@ namespace AuthN.Domain.Services.Orchestration
         }
 
         /// <inheritdoc/>
-        public Task<ActivationOutcome> TryActivateAsync(
+        public async Task<ActivationOutcome> TryActivateAsync(
             ActivationRequest request)
         {
             throw new NotImplementedException();

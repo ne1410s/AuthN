@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using AuthN.Domain.Exceptions;
 using AuthN.Domain.Models.Request;
 using AuthN.Domain.Models.Storage;
+using AuthN.Domain.Services.Security;
 using AuthN.Domain.Services.Storage;
 using AuthN.Domain.Services.Validation;
 
@@ -11,8 +12,7 @@ namespace AuthN.Domain.Services.Orchestration
     /// <inheritdoc cref="ILegacyLoginOrchestrator"/>
     public class LegacyLoginOrchestrator : ILegacyLoginOrchestrator
     {
-        private static readonly TimeSpan DefaultDuration
-            = TimeSpan.FromSeconds(600);
+        private const int DefaultDurationSeconds = 600;
 
         private readonly IItemValidator<LegacyLoginRequest> validator;
         private readonly IUserRepository userRepo;
@@ -36,30 +36,41 @@ namespace AuthN.Domain.Services.Orchestration
             LegacyLoginRequest request)
         {
             validator.AssertValid(request);
-            var user = await FindUser(request)
-                ?? throw new DataStateException("User not found");
 
+            var user = await AssertUserMatch(request);
+            AssertHashMatch(request.Password, user);
 
+            var duration = request.Duration ?? DefaultDurationSeconds;
+            return ToLoginResponse(user, duration);
         }
 
-        private async Task<AuthNUser?> FindUser(LegacyLoginRequest request)
-        {
-            return !string.IsNullOrWhiteSpace(request.Username)
-                ? await userRepo.FindByUsernameAsync(request.Username)
-                : await userRepo.FindByEmailAsync(request.Email!);
-        }
-
-        private LoginSuccess MapToResponse(
-            AuthNUser user,
+        private async Task<AuthNUser> AssertUserMatch(
             LegacyLoginRequest request)
         {
-            var expiry = DateTime.Now.AddSeconds(
-                request.Duration ?? DefaultDuration.TotalSeconds);
+            return (!string.IsNullOrWhiteSpace(request.Username)
+                ? await userRepo.FindByUsernameAsync(request.Username)
+                : await userRepo.FindByEmailAsync(request.Email!))
+                    ?? throw new DataStateException("User not found");
+        }
 
+        private static void AssertHashMatch(string password, AuthNUser user)
+        {
+            var incoming = password.Hash(user.PasswordSalt);
+            if (incoming != user.PasswordHash)
+            {
+                throw new OrchestrationException("Invalid password");
+            }
+        }
+
+        private static LoginSuccess ToLoginResponse(
+            AuthNUser user,
+            int duration)
+        {
+            var expiry = DateTime.Now.AddSeconds(duration);
             return new LoginSuccess
             {
                 User = user,
-                Token = "", //TODO!
+                Token = user.CreateJwt(duration),
                 TokenExpiresOn = expiry,
             };
         }
