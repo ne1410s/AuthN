@@ -1,0 +1,130 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>AuthN.Api</name>
+    </assembly>
+    <members>
+        <member name="T:AuthN.Api.Controllers.ActivationController">
+            <summary>
+            Activation controller.
+            </summary>
+        </member>
+        <member name="M:AuthN.Api.Controllers.ActivationController.#ctor(AuthN.Domain.Services.Orchestration.IActivationOrchestrator)">
+            <summary>
+            Initialises a new instance of the <see cref="T:AuthN.Api.Controllers.ActivationController"/>
+            class.
+            </summary>
+        </member>
+        <member name="T:AuthN.Api.Controllers.AuthenticationController">
+            <summary>
+            Controller.
+            </summary>
+        </member>
+        <member name="M:AuthN.Api.Controllers.AuthenticationController.#ctor(AuthN.Domain.Services.Orchestration.ILegacyLoginOrchestrator)">
+            <summary>
+            Initialises a new instance of the
+            <see cref="T:AuthN.Api.Controllers.AuthenticationController"/> class.
+            </summary>
+        </member>
+        <member name="T:AuthN.Api.Controllers.RegistrationController">
+            <summary>
+            Registration controller.
+            </summary>
+        </member>
+        <member name="M:AuthN.Api.Controllers.RegistrationController.#ctor(AuthN.Domain.Services.Orchestration.ILegacyRegistrationOrchestrator)">
+            <summary>
+            Initialises a new instance of the
+            <see cref="T:AuthN.Api.Controllers.RegistrationController"/> class.
+            </summary>
+            <param name="tradRegistrar">A traditional registration orchestrator.
+            </param>
+        </member>
+        <member name="T:AuthN.Api.Middleware.ExceptionHandler">
+            <summary>
+            Exception handling middleware.
+            </summary>
+        </member>
+        <member name="M:AuthN.Api.Middleware.ExceptionHandler.#ctor(Microsoft.AspNetCore.Http.RequestDelegate)">
+            <summary>
+            Initializes a new instance of the <see cref="T:AuthN.Api.Middleware.ExceptionHandler"/> class.
+            </summary>
+            <param name="next">The request processing.</param>
+        </member>
+        <member name="M:AuthN.Api.Middleware.ExceptionHandler.Invoke(Microsoft.AspNetCore.Http.HttpContext)">
+            <summary>
+            Invokes the middleware.
+            </summary>
+            <param name="httpContext">The http context.</param>
+            <returns>An asynchronous task.</returns>
+        </member>
+        <member name="T:AuthN.Api.Program">
+            <summary>
+            The program.
+            </summary>
+        </member>
+        <member name="M:AuthN.Api.Program.Main(System.String[])">
+            <summary>
+            The main entry point to the application.
+            </summary>
+            <param name="args">The arguments.</param>
+        </member>
+        <member name="M:AuthN.Api.Program.CreateHostBuilder(System.String[])">
+            <summary>
+            Creates a host builder.
+            </summary>
+            <param name="args">The arguments.</param>
+            <returns>A host builder.</returns>
+        </member>
+        <member name="T:AuthN.Api.Startup">
+            <summary>
+            The startup.
+            </summary>
+        </member>
+        <member name="M:AuthN.Api.Startup.#ctor(Microsoft.Extensions.Configuration.IConfiguration,Microsoft.AspNetCore.Hosting.IWebHostEnvironment)">
+            <summary>
+            Initialises a new instance of the <see cref="T:AuthN.Api.Startup"/> class.
+            </summary>
+            <param name="configuration">The configuration.</param>
+            <param name="env">The host environment.</param>
+        </member>
+        <member name="P:AuthN.Api.Startup.Configuration">
+            <summary>
+            Gets the configuration.
+            </summary>
+        </member>
+        <member name="P:AuthN.Api.Startup.Environment">
+            <summary>
+            Gets the host environment.
+            </summary>
+        </member>
+        <member name="M:AuthN.Api.Startup.ConfigureServices(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            Called by the runtime to add services to the container.
+            </summary>
+            <param name="services">The service collection.</param>
+        </member>
+        <member name="M:AuthN.Api.Startup.Configure(Microsoft.AspNetCore.Builder.IApplicationBuilder,Microsoft.AspNetCore.Hosting.IWebHostEnvironment)">
+            <summary>
+            Called by the runtime to configure the HTTP request pipeline.
+            </summary>
+            <param name="app">The app builder.</param>
+            <param name="env">The host environment.</param>
+        </member>
+        <member name="T:AuthN.Api.WebModels.HttpErrorResponse">
+            <summary>
+            Response returned from a unsuccessful http call.
+            </summary>
+            <param name="Type">The error type.</param>
+            <param name="Message">The error message.</param>
+            <param name="Errors">Any associated error details.</param>
+        </member>
+        <member name="M:AuthN.Api.WebModels.HttpErrorResponse.#ctor(System.String,System.String,System.String[])">
+            <summary>
+            Response returned from a unsuccessful http call.
+            </summary>
+            <param name="Type">The error type.</param>
+            <param name="Message">The error message.</param>
+            <param name="Errors">Any associated error details.</param>
+        </member>
+    </members>
+</doc>

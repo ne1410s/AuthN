@@ -1,0 +1,15 @@
+# Global Analyzer Config file
+is_global = true
+
+# .NET formatting rules https://docs.microsoft.com/en-us/dotnet/fundamentals/code-analysis/code-style-rule-options
+end_of_line = crlf
+
+# General diagnostics:
+dotnet_diagnostic.IDE0005.severity = warning    # Using directive is unnecessary.
+dotnet_diagnostic.CS1591.severity = warning     # Missing XML comment for public types and members.
+
+# Roslynator:
+roslynator.max_line_length = 80
+dotnet_diagnostic.RCS0056.severity = warning    # A line is too long.
+dotnet_diagnostic.RCS1090.severity = none       # Add call to configure await.
+dotnet_diagnostic.RCS1194.severity = none       # Exception constructors.

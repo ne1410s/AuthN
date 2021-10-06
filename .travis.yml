@@ -1,0 +1,17 @@
+os: linux
+language: csharp
+mono: none
+dotnet: 5.0.401
+solution: Afi.Registration.sln
+branches:
+  only: 
+    - main
+before_script:
+  - export PATH=$PATH:/$HOME/.dotnet/tools
+script:
+  - dotnet restore
+  - dotnet test --settings coverlet.runsettings
+  - dotnet tool install -g dotnet-reportgenerator-globaltool
+  - dotnet tool install -g coveralls.net
+  - reportgenerator -targetdir:coveragereport -reports:**/coverage.cobertura.xml -reporttypes:"html;htmlsummary;lcov" 
+  - csmacnz.Coveralls --lcov -i coveragereport/lcov.info --repoToken $COVERALLS_REPO_TOKEN --commitId $TRAVIS_COMMIT --commitBranch main

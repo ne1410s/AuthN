@@ -1,0 +1,522 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>AuthN.Domain</name>
+    </assembly>
+    <members>
+        <member name="T:AuthN.Domain.Exceptions.DataStateException">
+            <summary>
+            Represents errors occuring due to the state of data in the store.
+            </summary>
+        </member>
+        <member name="M:AuthN.Domain.Exceptions.DataStateException.#ctor">
+            <summary>
+            Initialises a new instance of the <see cref="T:AuthN.Domain.Exceptions.DataStateException"/>
+            class.
+            </summary>
+        </member>
+        <member name="M:AuthN.Domain.Exceptions.DataStateException.#ctor(System.String)">
+            <summary>
+            Initialises a new instance of the<see cref="T:AuthN.Domain.Exceptions.DataStateException"/>
+            class.
+            </summary>
+            <param name="message">The message.</param>
+        </member>
+        <member name="M:AuthN.Domain.Exceptions.DataStateException.#ctor(System.String,System.Exception)">
+            <summary>
+            Initialises a new instance of the <see cref="T:AuthN.Domain.Exceptions.DataStateException"/>
+            class.
+            </summary>
+            <param name="message">The message.</param>
+            <param name="innerException">The underlying cause.</param>
+        </member>
+        <member name="T:AuthN.Domain.Exceptions.OrchestrationException">
+            <summary>
+            Represents errors occuring in general domain processing.
+            </summary>
+        </member>
+        <member name="M:AuthN.Domain.Exceptions.OrchestrationException.#ctor">
+            <summary>
+            Initialises a new instance of the <see cref="T:AuthN.Domain.Exceptions.DataStateException"/>
+            class.
+            </summary>
+        </member>
+        <member name="M:AuthN.Domain.Exceptions.OrchestrationException.#ctor(System.String)">
+            <summary>
+            Initialises a new instance of the<see cref="T:AuthN.Domain.Exceptions.DataStateException"/>
+            class.
+            </summary>
+            <param name="message">The message.</param>
+        </member>
+        <member name="M:AuthN.Domain.Exceptions.OrchestrationException.#ctor(System.String,System.Exception)">
+            <summary>
+            Initialises a new instance of the <see cref="T:AuthN.Domain.Exceptions.DataStateException"/>
+            class.
+            </summary>
+            <param name="message">The message.</param>
+            <param name="innerException">The underlying cause.</param>
+        </member>
+        <member name="T:AuthN.Domain.Exceptions.ValidatorException">
+            <summary>
+            Represents errors occuring during validation.
+            </summary>
+        </member>
+        <member name="M:AuthN.Domain.Exceptions.ValidatorException.#ctor(AuthN.Domain.Services.Validation.InvalidItem[])">
+            <summary>
+            Initialises a new instance of the <see cref="T:AuthN.Domain.Exceptions.ValidatorException"/>
+            class.
+            </summary>
+            <param name="invalidItems">Invalid items.</param>
+        </member>
+        <member name="P:AuthN.Domain.Exceptions.ValidatorException.InvalidItems">
+            <summary>
+            Gets the invalid items.
+            </summary>
+        </member>
+        <member name="T:AuthN.Domain.Models.Request.ActivationOutcome">
+            <summary>
+            Outcome of a traditional activation.
+            </summary>
+        </member>
+        <member name="F:AuthN.Domain.Models.Request.ActivationOutcome.Inconclusive">
+            <summary>
+            Status unknown. This is only provided to serve as a default.
+            </summary>
+        </member>
+        <member name="F:AuthN.Domain.Models.Request.ActivationOutcome.Success">
+            <summary>
+            The user account was activated successfully.
+            </summary>
+        </member>
+        <member name="F:AuthN.Domain.Models.Request.ActivationOutcome.AlreadyActivated">
+            <summary>
+            The user account was already activated.
+            </summary>
+        </member>
+        <member name="F:AuthN.Domain.Models.Request.ActivationOutcome.CodeExpired">
+            <summary>
+            The activation code has expired. A new one must be request.
+            </summary>
+        </member>
+        <member name="F:AuthN.Domain.Models.Request.ActivationOutcome.NoMatchFound">
+            <summary>
+            The requested details did not match any applicable users.
+            </summary>
+        </member>
+        <member name="T:AuthN.Domain.Models.Request.ActivationRequest">
+            <summary>
+            A request to activate following registration in the traditional fashion.
+            This is typically done from a hyperlink which was emailed to the user.
+            </summary>
+        </member>
+        <member name="P:AuthN.Domain.Models.Request.ActivationRequest.EmailAddress">
+            <summary>
+            Gets the email address.
+            </summary>
+        </member>
+        <member name="P:AuthN.Domain.Models.Request.ActivationRequest.Username">
+            <summary>
+            Gets the username.
+            </summary>
+        </member>
+        <member name="P:AuthN.Domain.Models.Request.ActivationRequest.ActivationCode">
+            <summary>
+            Gets the activation code.
+            </summary>
+        </member>
+        <member name="T:AuthN.Domain.Models.Request.LegacyLoginRequest">
+            <summary>
+            A request to login traditionally; with username and password.
+            </summary>
+        </member>
+        <member name="P:AuthN.Domain.Models.Request.LegacyLoginRequest.Username">
+            <summary>
+            Gets the username.
+            </summary>
+        </member>
+        <member name="P:AuthN.Domain.Models.Request.LegacyLoginRequest.Password">
+            <summary>
+            Gets the password.
+            </summary>
+        </member>
+        <member name="P:AuthN.Domain.Models.Request.LegacyLoginRequest.Duration">
+            <summary>
+            Gets the requested session duration in seconds.
+            </summary>
+        </member>
+        <member name="T:AuthN.Domain.Models.Request.LegacyRegistrationRequest">
+            <summary>
+            A request to register in a traditional fashion; the username, password,
+            personal details are supplied explicity. Activation is later required.
+            </summary>
+        </member>
+        <member name="P:AuthN.Domain.Models.Request.LegacyRegistrationRequest.Username">
+            <summary>
+            Gets the username.
+            </summary>
+        </member>
+        <member name="P:AuthN.Domain.Models.Request.LegacyRegistrationRequest.Password">
+            <summary>
+            Gets the password.
+            </summary>
+        </member>
+        <member name="P:AuthN.Domain.Models.Request.LegacyRegistrationRequest.Forename">
+            <summary>
+            Gets the forename.
+            </summary>
+        </member>
+        <member name="P:AuthN.Domain.Models.Request.LegacyRegistrationRequest.Surname">
+            <summary>
+            Gets the surname.
+            </summary>
+        </member>
+        <member name="P:AuthN.Domain.Models.Request.LegacyRegistrationRequest.Email">
+            <summary>
+            Gets the email.
+            </summary>
+        </member>
+        <member name="T:AuthN.Domain.Models.Request.LegacyRegistrationSuccess">
+            <summary>
+            A result from a successful registration.
+            </summary>
+        </member>
+        <member name="P:AuthN.Domain.Models.Request.LegacyRegistrationSuccess.ActivationCode">
+            <summary>
+            Gets the activation code.
+            </summary>
+        </member>
+        <member name="T:AuthN.Domain.Models.Request.LoginSuccess">
+            <summary>
+            A result from a successful login.
+            </summary>
+        </member>
+        <member name="P:AuthN.Domain.Models.Request.LoginSuccess.Token">
+            <summary>
+            Gets the Json Web Token.
+            </summary>
+        </member>
+        <member name="P:AuthN.Domain.Models.Request.LoginSuccess.TokenExpiresOn">
+            <summary>
+            Gets the token expiry time.
+            </summary>
+        </member>
+        <member name="P:AuthN.Domain.Models.Request.LoginSuccess.User">
+            <summary>
+            Gets the authenticated user instance.
+            </summary>
+        </member>
+        <member name="T:AuthN.Domain.Models.Storage.AuthNRole">
+            <summary>
+            A role.
+            </summary>
+        </member>
+        <member name="P:AuthN.Domain.Models.Storage.AuthNRole.Name">
+            <summary>
+            Gets the role name.
+            </summary>
+        </member>
+        <member name="T:AuthN.Domain.Models.Storage.AuthNUser">
+            <summary>
+            A user.
+            </summary>
+        </member>
+        <member name="P:AuthN.Domain.Models.Storage.AuthNUser.Username">
+            <summary>
+            Gets the username.
+            </summary>
+        </member>
+        <member name="P:AuthN.Domain.Models.Storage.AuthNUser.PasswordSalt">
+            <summary>
+            Gets the password salt.
+            </summary>
+        </member>
+        <member name="P:AuthN.Domain.Models.Storage.AuthNUser.PasswordHash">
+            <summary>
+            Gets the password hash.
+            </summary>
+        </member>
+        <member name="P:AuthN.Domain.Models.Storage.AuthNUser.Forename">
+            <summary>
+            Gets the forename.
+            </summary>
+        </member>
+        <member name="P:AuthN.Domain.Models.Storage.AuthNUser.Surname">
+            <summary>
+            Gets the surname.
+            </summary>
+        </member>
+        <member name="P:AuthN.Domain.Models.Storage.AuthNUser.RegistrationEmail">
+            <summary>
+            Gets the email address with which the user is (or is going to be)
+            activated.
+            </summary>
+        </member>
+        <member name="P:AuthN.Domain.Models.Storage.AuthNUser.ActivationCodeGeneratedOn">
+            <summary>
+            Gets the date the activation code was last generated.
+            </summary>
+        </member>
+        <member name="P:AuthN.Domain.Models.Storage.AuthNUser.ActivationCode">
+            <summary>
+            Gets the activation code created on traditional registration.
+            </summary>
+        </member>
+        <member name="P:AuthN.Domain.Models.Storage.AuthNUser.CreatedOn">
+            <summary>
+            Gets the date created.
+            </summary>
+        </member>
+        <member name="P:AuthN.Domain.Models.Storage.AuthNUser.ActivatedOn">
+            <summary>
+            Gets the date activated, if indeed active. 3rd party authentication
+            registrations are activated immediately whereas traditional requests
+            require subsequent email verification.
+            </summary>
+        </member>
+        <member name="P:AuthN.Domain.Models.Storage.AuthNUser.Roles">
+            <summary>
+            Gets the roles to which the user belongs.
+            </summary>
+        </member>
+        <member name="T:AuthN.Domain.Services.Orchestration.ActivationOrchestrator">
+            <inheritdoc cref="T:AuthN.Domain.Services.Orchestration.IActivationOrchestrator"/>
+        </member>
+        <member name="M:AuthN.Domain.Services.Orchestration.ActivationOrchestrator.#ctor(AuthN.Domain.Services.Storage.IUserRepository)">
+            <summary>
+            Initialises a new instance of the
+            <see cref="T:AuthN.Domain.Services.Orchestration.ActivationOrchestrator"/> class.
+            </summary>
+        </member>
+        <member name="M:AuthN.Domain.Services.Orchestration.ActivationOrchestrator.TryActivateAsync(AuthN.Domain.Models.Request.ActivationRequest)">
+            <inheritdoc/>
+        </member>
+        <member name="T:AuthN.Domain.Services.Orchestration.IActivationOrchestrator">
+            <summary>
+            The activation orchestrator; whereby traditionally-registered users have
+            submitted an activation code that was (e.g.) emailed to them. This is
+            not required in 3rd party authentication registration workflow, where
+            activation is implicitly granted on registration.
+            </summary>
+        </member>
+        <member name="M:AuthN.Domain.Services.Orchestration.IActivationOrchestrator.TryActivateAsync(AuthN.Domain.Models.Request.ActivationRequest)">
+            <summary>
+            Attempts to activate a user, returning the status.
+            </summary>
+            <param name="request">The request.</param>
+            <returns>The response.</returns>
+            <exception cref="T:AuthN.Domain.Exceptions.OrchestrationException"></exception>
+        </member>
+        <member name="T:AuthN.Domain.Services.Orchestration.ILegacyLoginOrchestrator">
+            <summary>
+            The legacy login orchestrator.
+            </summary>
+        </member>
+        <member name="M:AuthN.Domain.Services.Orchestration.ILegacyLoginOrchestrator.LegacyLoginAsync(AuthN.Domain.Models.Request.LegacyLoginRequest)">
+            <summary>
+            Authenticates a user based on a request.
+            </summary>
+            <param name="request">The request.</param>
+            <returns>The response.</returns>
+            <exception cref="T:AuthN.Domain.Exceptions.OrchestrationException"></exception>
+        </member>
+        <member name="T:AuthN.Domain.Services.Orchestration.ILegacyRegistrationOrchestrator">
+            <summary>
+            The legacy registration orchestrator.
+            </summary>
+        </member>
+        <member name="M:AuthN.Domain.Services.Orchestration.ILegacyRegistrationOrchestrator.LegacyRegisterAsync(AuthN.Domain.Models.Request.LegacyRegistrationRequest)">
+            <summary>
+            Registers a user using a traditional workflow; whereby an email will
+            be sent out for subsequent activation.
+            </summary>
+            <param name="request">The request.</param>
+            <returns>The response.</returns>
+            <exception cref="T:AuthN.Domain.Exceptions.OrchestrationException"></exception>
+        </member>
+        <member name="T:AuthN.Domain.Services.Orchestration.LegacyLoginOrchestrator">
+            <inheritdoc cref="T:AuthN.Domain.Services.Orchestration.ILegacyLoginOrchestrator"/>
+        </member>
+        <member name="M:AuthN.Domain.Services.Orchestration.LegacyLoginOrchestrator.#ctor(AuthN.Domain.Services.Storage.IUserRepository)">
+            <summary>
+            Initialises a new instance of the <see cref="T:AuthN.Domain.Services.Orchestration.LegacyLoginOrchestrator"/>
+            class.
+            </summary>
+        </member>
+        <member name="M:AuthN.Domain.Services.Orchestration.LegacyLoginOrchestrator.LegacyLoginAsync(AuthN.Domain.Models.Request.LegacyLoginRequest)">
+            <inheritdoc/>
+        </member>
+        <member name="T:AuthN.Domain.Services.Orchestration.LegacyRegistrationOrchestrator">
+            <inheritdoc cref="T:AuthN.Domain.Services.Orchestration.ILegacyRegistrationOrchestrator"/>
+        </member>
+        <member name="M:AuthN.Domain.Services.Orchestration.LegacyRegistrationOrchestrator.#ctor(AuthN.Domain.Services.Validation.IItemValidator{AuthN.Domain.Models.Request.LegacyRegistrationRequest},AuthN.Domain.Services.Storage.IUserRepository)">
+            <summary>
+            Initialises a new instance of the
+            <see cref="T:AuthN.Domain.Services.Orchestration.LegacyRegistrationOrchestrator"/> class.
+            </summary>
+        </member>
+        <member name="M:AuthN.Domain.Services.Orchestration.LegacyRegistrationOrchestrator.LegacyRegisterAsync(AuthN.Domain.Models.Request.LegacyRegistrationRequest)">
+            <inheritdoc/>
+        </member>
+        <member name="T:AuthN.Domain.Services.Storage.IRoleRepository">
+            <summary>
+            Storage repository for the <see cref="T:AuthN.Domain.Models.Storage.AuthNRole"/> model.
+            </summary>
+        </member>
+        <member name="M:AuthN.Domain.Services.Storage.IRoleRepository.ListAsync">
+            <summary>
+            Lists all roles in the system.
+            </summary>
+            <returns>A list of all roles.</returns>
+        </member>
+        <member name="M:AuthN.Domain.Services.Storage.IRoleRepository.ListForUserAsync(System.String)">
+            <summary>
+            Lists all roles assigned to a particular user.
+            </summary>
+            <param name="username">The username.</param>
+            <returns>A list of user roles.</returns>
+            <exception cref="T:AuthN.Domain.Exceptions.DataStateException">User not found.</exception>
+        </member>
+        <member name="T:AuthN.Domain.Services.Storage.IUserRepository">
+            <summary>
+            Storage repository for the <see cref="T:AuthN.Domain.Models.Storage.AuthNUser"/> model.
+            </summary>
+        </member>
+        <member name="M:AuthN.Domain.Services.Storage.IUserRepository.AddAsync(AuthN.Domain.Models.Storage.AuthNUser)">
+            <summary>
+            Adds a user to the system.
+            </summary>
+            <param name="user">The user to add.</param>
+            <exception cref="T:AuthN.Domain.Exceptions.DataStateException">User already exists.</exception>
+        </member>
+        <member name="M:AuthN.Domain.Services.Storage.IUserRepository.ActivateAsync(System.String)">
+            <summary>
+            Activates a user.
+            </summary>
+            <exception cref="T:AuthN.Domain.Exceptions.DataStateException">User does not exist.</exception>
+        </member>
+        <member name="M:AuthN.Domain.Services.Storage.IUserRepository.FindByUsernameAsync(System.String)">
+            <summary>
+            Gets a user by their username, or null if none found.
+            </summary>
+            <param name="username">The username.</param>
+            <returns>A matching user.</returns>
+        </member>
+        <member name="M:AuthN.Domain.Services.Storage.IUserRepository.FindByEmailAsync(System.String)">
+            <summary>
+            Gets a user by their registration email, or null if none found.
+            </summary>
+            <param name="registrationEmail">The original email.</param>
+            <returns>A matching user.</returns>
+        </member>
+        <member name="T:AuthN.Domain.Services.Validation.CommonRegex">
+            <summary>
+            Common regular expression strings.
+            </summary>
+        </member>
+        <member name="F:AuthN.Domain.Services.Validation.CommonRegex.KebabCase">
+            <summary>
+            Kebab case regular expression.
+            </summary>
+        </member>
+        <member name="T:AuthN.Domain.Services.Validation.CommonRules">
+            <summary>
+            Exposes control over a set of common validation rules.
+            </summary>
+        </member>
+        <member name="M:AuthN.Domain.Services.Validation.CommonRules.#ctor(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Exposes control over a set of common validation rules.
+            </summary>
+        </member>
+        <member name="T:AuthN.Domain.Services.Validation.FluentValidatorBase`1">
+            <summary>
+            Validates a model of type <typeparamref name="T"/>.
+            </summary>
+            <typeparam name="T">The model type.</typeparam>
+        </member>
+        <member name="M:AuthN.Domain.Services.Validation.FluentValidatorBase`1.#ctor">
+            <summary>
+            Initialises a new instance of the
+            <see cref="T:AuthN.Domain.Services.Validation.FluentValidatorBase`1"/> class.
+            </summary>
+        </member>
+        <member name="M:AuthN.Domain.Services.Validation.FluentValidatorBase`1.AssertValid(`0)">
+            <inheritdoc/>
+        </member>
+        <member name="M:AuthN.Domain.Services.Validation.FluentValidatorBase`1.DefineModelValidity">
+            <summary>
+            Defines the fluent validation rules.
+            </summary>
+        </member>
+        <member name="T:AuthN.Domain.Services.Validation.IItemValidator`1">
+            <summary>
+            Validates an item.
+            </summary>
+            <typeparam name="TItem">The item type.</typeparam>
+        </member>
+        <member name="M:AuthN.Domain.Services.Validation.IItemValidator`1.AssertValid(`0)">
+            <summary>
+            Validates an item.
+            </summary>
+            <param name="item">The item to validate.</param>
+            <exception cref="T:AuthN.Domain.Exceptions.ValidatorException">Item is invalid.</exception>
+        </member>
+        <member name="T:AuthN.Domain.Services.Validation.InvalidItem">
+            <summary>
+            Represents an invalid item.
+            </summary>
+        </member>
+        <member name="P:AuthN.Domain.Services.Validation.InvalidItem.ErrorMessage">
+            <summary>
+            Gets the error message.
+            </summary>
+        </member>
+        <member name="P:AuthN.Domain.Services.Validation.InvalidItem.Property">
+            <summary>
+            Gets the property name.
+            </summary>
+        </member>
+        <member name="P:AuthN.Domain.Services.Validation.InvalidItem.AttemptedValue">
+            <summary>
+            Gets the attempted (invalid) value.
+            </summary>
+        </member>
+        <member name="T:AuthN.Domain.Services.Validation.Models.LegacyLoginRequestValidator">
+            <summary>
+            Validates a <see cref="T:AuthN.Domain.Models.Request.LegacyLoginRequest"/> instance.
+            </summary>
+        </member>
+        <member name="M:AuthN.Domain.Services.Validation.Models.LegacyLoginRequestValidator.#ctor(AuthN.Domain.Services.Validation.CommonRules)">
+            <summary>
+            Initialises a new instance of the
+            <see cref="T:AuthN.Domain.Services.Validation.Models.LegacyLoginRequestValidator"/> class.
+            </summary>
+            <param name="commonRules">A common set of rules.</param>
+        </member>
+        <member name="M:AuthN.Domain.Services.Validation.Models.LegacyLoginRequestValidator.DefineModelValidity">
+            <inheritdoc/>
+        </member>
+        <member name="T:AuthN.Domain.Services.Validation.Models.RoleValidator">
+            <summary>
+            Validates a <see cref="T:AuthN.Domain.Models.Storage.AuthNRole"/> instance.
+            </summary>
+        </member>
+        <member name="M:AuthN.Domain.Services.Validation.Models.RoleValidator.DefineModelValidity">
+            <inheritdoc/>
+        </member>
+        <member name="T:AuthN.Domain.Services.Validation.Models.UserValidator">
+            <summary>
+            Validates a <see cref="T:AuthN.Domain.Models.Storage.AuthNUser"/> instance.
+            </summary>
+        </member>
+        <member name="M:AuthN.Domain.Services.Validation.Models.UserValidator.#ctor(AuthN.Domain.Services.Validation.CommonRules)">
+            <summary>
+            Initialises a new instance of the <see cref="T:AuthN.Domain.Services.Validation.Models.UserValidator"/> class.
+            </summary>
+            <param name="commonRules">A common set of rules.</param>
+        </member>
+        <member name="M:AuthN.Domain.Services.Validation.Models.UserValidator.DefineModelValidity">
+            <inheritdoc/>
+        </member>
+    </members>
+</doc>
