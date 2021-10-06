@@ -4,7 +4,7 @@
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
 # Xml documentation (build output)
-Afi.Registration.*/Afi.Registration.*.[Xx]ml
+AuthN.*/AuthN.*.[Xx]ml
 
 # Coverlet generated reports
 coveragereport/
