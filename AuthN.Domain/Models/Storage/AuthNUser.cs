@@ -37,7 +37,7 @@ namespace AuthN.Domain.Models.Storage
         /// Gets the email address with which the user is (or is going to be)
         /// activated.
         /// </summary>
-        public string RegistrationEmail { get; init; } = default!;
+        public string RegisteredEmail { get; init; } = default!;
 
         /// <summary>
         /// Gets the date the activation code was last generated.

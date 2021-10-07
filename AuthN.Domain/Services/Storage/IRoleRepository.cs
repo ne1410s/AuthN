@@ -21,7 +21,7 @@ namespace AuthN.Domain.Services.Storage
         /// </summary>
         /// <param name="username">The username.</param>
         /// <returns>A list of user roles.</returns>
-        /// <exception cref="DataStateException">User not found.</exception>
+        /// <exception cref="DataStateException"/>
         public Task<IList<AuthNRole>> ListForUserAsync(string username);
     }
 }

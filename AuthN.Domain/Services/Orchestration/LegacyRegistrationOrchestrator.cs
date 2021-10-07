@@ -6,6 +6,7 @@ using AuthN.Domain.Models.Storage;
 using AuthN.Domain.Services.Security;
 using AuthN.Domain.Services.Storage;
 using AuthN.Domain.Services.Validation;
+using Microsoft.Extensions.Configuration;
 
 namespace AuthN.Domain.Services.Orchestration
 {
@@ -13,6 +14,7 @@ namespace AuthN.Domain.Services.Orchestration
     public class LegacyRegistrationOrchestrator
         : ILegacyRegistrationOrchestrator
     {
+        private readonly TimeSpan activationWindow;
         private readonly IItemValidator<LegacyRegistrationRequest> validator;
         private readonly IUserRepository userRepo;
 
@@ -20,12 +22,17 @@ namespace AuthN.Domain.Services.Orchestration
         /// Initialises a new instance of the
         /// <see cref="LegacyRegistrationOrchestrator"/> class.
         /// </summary>
+        /// <param name="config">The configuration.</param>
         /// <param name="validator">The request validator.</param>
         /// <param name="userRepo">The user respository.</param>
         public LegacyRegistrationOrchestrator(
+            IConfiguration config,
             IItemValidator<LegacyRegistrationRequest> validator,
             IUserRepository userRepo)
         {
+            var windowHours = config["legacyAuth::activationWindowHours"];
+            activationWindow = TimeSpan.FromHours(double.Parse(windowHours));
+
             this.validator = validator;
             this.userRepo = userRepo;
         }
@@ -42,7 +49,11 @@ namespace AuthN.Domain.Services.Orchestration
             var user = MapToNewUser(request);
             await userRepo.AddAsync(user);
 
-            return new() { ActivationCode = user.ActivationCode!.Value };
+            return new()
+            {
+                ActivationCode = user.ActivationCode!.Value,
+                ExpiresOn = DateTime.Now + activationWindow,
+            };
         }
 
         private async Task AssertUniqueEmail(
@@ -82,7 +93,7 @@ namespace AuthN.Domain.Services.Orchestration
                 CreatedOn = utcNow,
                 Forename = request.Forename,
                 Surname = request.Surname,
-                RegistrationEmail = request.Email.ToLower(),
+                RegisteredEmail = request.Email.ToLower(),
                 Username = request.Username,
                 PasswordSalt = salt,
                 PasswordHash = request.Password.Hash(salt),

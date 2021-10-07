@@ -5,6 +5,7 @@
     /// </summary>
     public record CommonRules(
         int UsernameMinLength = 6,
+        int EmailMinLength = 6,
         int PasswordMinLength = 8,
         int TokenMaxMinutes = 60);
 }

@@ -6,14 +6,16 @@ using AuthN.Domain.Models.Storage;
 using AuthN.Domain.Services.Security;
 using AuthN.Domain.Services.Storage;
 using AuthN.Domain.Services.Validation;
+using Microsoft.Extensions.Configuration;
 
 namespace AuthN.Domain.Services.Orchestration
 {
     /// <inheritdoc cref="ILegacyLoginOrchestrator"/>
     public class LegacyLoginOrchestrator : ILegacyLoginOrchestrator
     {
-        private const int DefaultDurationSeconds = 600;
-
+        private readonly string jwtIssuer;
+        private readonly string jwtSecret;
+        private readonly int defaultTokenDurationSeconds;
         private readonly IItemValidator<LegacyLoginRequest> validator;
         private readonly IUserRepository userRepo;
 
@@ -21,12 +23,19 @@ namespace AuthN.Domain.Services.Orchestration
         /// Initialises a new instance of the <see cref="LegacyLoginOrchestrator"/>
         /// class.
         /// </summary>
+        /// <param name="config">The configuration.</param>
         /// <param name="validator">The request validator.</param>
         /// <param name="userRepo">The user repository.</param>
         public LegacyLoginOrchestrator(
+            IConfiguration config,
             IItemValidator<LegacyLoginRequest> validator,
             IUserRepository userRepo)
         {
+            jwtIssuer = config["jwt::issuer"];
+            jwtSecret = config["jwt::secret"];
+            var defaultTokenSeconds = config["jwt::defTokenDurationSeconds"];
+            defaultTokenDurationSeconds = int.Parse(defaultTokenSeconds);
+
             this.validator = validator;
             this.userRepo = userRepo;
         }
@@ -40,8 +49,8 @@ namespace AuthN.Domain.Services.Orchestration
             var user = await AssertUserMatch(request);
             AssertHashMatch(request.Password, user);
 
-            var duration = request.Duration ?? DefaultDurationSeconds;
-            return ToLoginResponse(user, duration);
+            var duration = request.Duration ?? defaultTokenDurationSeconds;
+            return ToLoginResponse(user, duration, jwtIssuer, jwtSecret);
         }
 
         private async Task<AuthNUser> AssertUserMatch(
@@ -64,13 +73,15 @@ namespace AuthN.Domain.Services.Orchestration
 
         private static LoginSuccess ToLoginResponse(
             AuthNUser user,
-            int duration)
+            int tokenDuration,
+            string tokenIssuer,
+            string tokenSecret)
         {
-            var expiry = DateTime.Now.AddSeconds(duration);
+            var expiry = DateTime.Now.AddSeconds(tokenDuration);
             return new LoginSuccess
             {
                 User = user,
-                Token = user.CreateJwt(duration),
+                Token = user.CreateJwt(tokenDuration, tokenSecret, tokenIssuer),
                 TokenExpiresOn = expiry,
             };
         }

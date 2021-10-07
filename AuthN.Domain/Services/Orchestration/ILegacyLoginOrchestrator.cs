@@ -14,7 +14,7 @@ namespace AuthN.Domain.Services.Orchestration
         /// </summary>
         /// <param name="request">The request.</param>
         /// <returns>The response.</returns>
-        /// <exception cref="OrchestrationException"></exception>
+        /// <exception cref="OrchestrationException"/>
         public Task<LoginSuccess> LegacyLoginAsync(LegacyLoginRequest request);
     }
 }

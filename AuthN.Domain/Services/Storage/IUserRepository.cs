@@ -13,13 +13,13 @@ namespace AuthN.Domain.Services.Storage
         /// Adds a user to the system.
         /// </summary>
         /// <param name="user">The user to add.</param>
-        /// <exception cref="DataStateException">User already exists.</exception>
+        /// <exception cref="DataStateException"/>
         public Task AddAsync(AuthNUser user);
 
         /// <summary>
         /// Activates a user.
         /// </summary>
-        /// <exception cref="DataStateException">User does not exist.</exception>
+        /// <exception cref="DataStateException"/>
         public Task ActivateAsync(string username);
 
         /// <summary>

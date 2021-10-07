@@ -1,4 +1,6 @@
-﻿namespace AuthN.Domain.Models.Request
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace AuthN.Domain.Models.Request
 {
     /// <summary>
     /// A request to login traditionally; with username and password.
@@ -18,6 +20,7 @@
         /// <summary>
         /// Gets the password.
         /// </summary>
+        [Required]
         public string Password { get; init; } = default!;
 
         /// <summary>

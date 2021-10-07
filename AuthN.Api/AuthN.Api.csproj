@@ -14,6 +14,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Mappers\**" />
+    <Content Remove="Mappers\**" />
+    <EmbeddedResource Remove="Mappers\**" />
+    <None Remove="Mappers\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="AuthN.Api.xml" />
   </ItemGroup>
 
@@ -43,7 +50,6 @@
     
   <ItemGroup>
     <Folder Include="WebModels\" />
-    <Folder Include="Mappers\" />
     <Folder Include="Middleware\" />
   </ItemGroup>
 

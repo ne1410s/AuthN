@@ -30,22 +30,15 @@ namespace AuthN.Domain.Services.Validation.Models
                 .When(x => string.IsNullOrWhiteSpace(x.Email))
                 .WithMessage("Either username or email must be provided.");
 
-            RuleFor(x => x.Email).Length(6, 512);
+            var emailMinLength = commonRules.EmailMinLength;
+            RuleFor(x => x.Email).EmailAddress().Length(emailMinLength, 512);
             RuleFor(x => x.Email).NotEmpty()
                 .When(x => string.IsNullOrWhiteSpace(x.Username))
                 .WithMessage("Either username or email must be provided.");
 
             var passMinLength = commonRules.PasswordMinLength;
-            const string containsText = "'Password' must contain at least one";
             RuleFor(x => x.Password).NotEmpty().Length(passMinLength, 512);
-            RuleFor(x => x.Password).Matches("[A-Z]")
-                .WithMessage($"{containsText} capital letter");
-            RuleFor(x => x.Password).Matches("[a-z]")
-                .WithMessage($"{containsText} lower case letter");
-            RuleFor(x => x.Password).Matches("\\d")
-                .WithMessage($"{containsText} number");
-            RuleFor(x => x.Password).Matches("\\W")
-                .WithMessage($"{containsText} special character");
+            RuleFor(x => x.Password).IsSufficientlyComplex();
 
             var tokenMaxSeconds = commonRules.TokenMaxMinutes * 60;
             RuleFor(x => x.Duration).InclusiveBetween(5, tokenMaxSeconds);

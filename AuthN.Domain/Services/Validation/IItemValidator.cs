@@ -12,7 +12,7 @@ namespace AuthN.Domain.Services.Validation
         /// Validates an item.
         /// </summary>
         /// <param name="item">The item to validate.</param>
-        /// <exception cref="ValidatorException">Item is invalid.</exception>
+        /// <exception cref="ValidatorException"/>
         public void AssertValid(TItem item);
     }
 }
