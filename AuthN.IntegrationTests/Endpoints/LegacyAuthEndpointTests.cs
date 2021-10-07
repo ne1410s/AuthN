@@ -1,8 +1,8 @@
 using Xunit;
 
-namespace AuthN.IntegrationTests
+namespace AuthN.IntegrationTests.Endpoints
 {
-    public class UnitTest1
+    public class LegacyAuthEndpointTests
     {
         [Fact]
         public void Test1()

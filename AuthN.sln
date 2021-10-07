@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31702.278
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthN.Api", "AuthN.Api\AuthN.Api.csproj", "{90625363-3219-4959-A06C-6ECA03C7EB89}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthN.Api", "AuthN.Api\AuthN.Api.csproj", "{90625363-3219-4959-A06C-6ECA03C7EB89}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{19472C20-E753-4F75-BFA4-5274A5031462}"
 	ProjectSection(SolutionItems) = preProject
@@ -16,11 +16,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Testing", "Testing", "{148CB73C-B343-42CE-85AB-523706289C0B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthN.UnitTests", "AuthN.UnitTests\AuthN.UnitTests.csproj", "{516B001A-A407-47D0-BE75-6DDE23028DF6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthN.UnitTests", "AuthN.UnitTests\AuthN.UnitTests.csproj", "{516B001A-A407-47D0-BE75-6DDE23028DF6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthN.IntegrationTests", "AuthN.IntegrationTests\AuthN.IntegrationTests.csproj", "{ADC47820-0D5A-4D00-86AC-79A29BD7F28D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthN.IntegrationTests", "AuthN.IntegrationTests\AuthN.IntegrationTests.csproj", "{ADC47820-0D5A-4D00-86AC-79A29BD7F28D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthN.Domain", "AuthN.Domain\AuthN.Domain.csproj", "{00388116-9F3E-4CEF-800D-7558B1992BF8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthN.Domain", "AuthN.Domain\AuthN.Domain.csproj", "{00388116-9F3E-4CEF-800D-7558B1992BF8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthN.Persistence", "AuthN.Persistence\AuthN.Persistence.csproj", "{E5ED88D4-83B2-4E3B-B1C4-55E61D265A3F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -44,6 +46,10 @@ Global
 		{00388116-9F3E-4CEF-800D-7558B1992BF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{00388116-9F3E-4CEF-800D-7558B1992BF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{00388116-9F3E-4CEF-800D-7558B1992BF8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E5ED88D4-83B2-4E3B-B1C4-55E61D265A3F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E5ED88D4-83B2-4E3B-B1C4-55E61D265A3F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E5ED88D4-83B2-4E3B-B1C4-55E61D265A3F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E5ED88D4-83B2-4E3B-B1C4-55E61D265A3F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

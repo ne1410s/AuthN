@@ -3,12 +3,15 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <IsPackable>false</IsPackable>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <GlobalAnalyzerConfigFiles Include="..\.analyzerconfig" Link=".analyzerconfig" />
+    <Compile Remove="TestResults\**" />
+    <EmbeddedResource Remove="TestResults\**" />
+    <None Remove="TestResults\**" />
   </ItemGroup>
-    
+
   <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="6.1.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
@@ -37,6 +40,18 @@
     
   <ItemGroup>
     <ProjectReference Include="..\AuthN.Api\AuthN.Api.csproj" />
+  </ItemGroup>
+    
+  <ItemGroup>
+    <Folder Include="Persistence\" />
+  </ItemGroup>
+    
+  <ItemGroup>
+    <EditorConfigFiles Remove="..\.analyzerconfig" />
+  </ItemGroup>
+    
+  <ItemGroup>
+    <EditorConfigFiles Remove="..\.analyzerconfig" />
   </ItemGroup>
 
 </Project>

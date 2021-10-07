@@ -7,13 +7,13 @@ namespace AuthN.Api.Controllers
     /// </summary>
     [ApiController]
     [Route("[controller]")]
-    public class AuthenticationController : ControllerBase
+    public class AuthController : ControllerBase
     {
         /// <summary>
         /// Initialises a new instance of the
-        /// <see cref="AuthenticationController"/> class.
+        /// <see cref="AuthController"/> class.
         /// </summary>
-        public AuthenticationController()
+        public AuthController()
         {
         }
     }
