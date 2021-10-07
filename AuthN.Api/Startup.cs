@@ -1,4 +1,9 @@
 using System;
+using AuthN.Domain.Models.Request;
+using AuthN.Domain.Models.Storage;
+using AuthN.Domain.Services.Orchestration;
+using AuthN.Domain.Services.Validation;
+using AuthN.Domain.Services.Validation.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -41,8 +46,10 @@ namespace AuthN.Api
         /// <param name="services">The service collection.</param>
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddControllers()
+                .AddJsonOptions(options =>
+                    options.JsonSerializerOptions.IgnoreNullValues = true);
 
-            services.AddControllers();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo
@@ -51,6 +58,14 @@ namespace AuthN.Api
                     Version = "v1"
                 });
             });
+
+            var connectionString = Configuration.GetConnectionString("AuthNDb");
+            //services.AddDbContext<AuthNDbContext>(
+            //    options => options.UseSqlServer(connectionString));
+
+            InjectOrchestrators(services);
+            InjectValidators(services);
+            InjectRepositories(services);
         }
 
         /// <summary>
@@ -69,8 +84,8 @@ namespace AuthN.Api
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint(
-                        "/swagger/v1/swagger.json",
-                        "AuthN.Api v1");
+                    "/swagger/v1/swagger.json",
+                    "AuthN.Api v1");
 
                 if (env.IsProduction())
                 {
@@ -79,14 +94,45 @@ namespace AuthN.Api
                 }
             });
 
-
             app.UseHttpsRedirection();
-
             app.UseRouting();
-
             app.UseAuthorization();
-
             app.UseEndpoints(endpoints => endpoints.MapControllers());
+        }
+
+        private static void InjectOrchestrators(IServiceCollection services)
+        {
+            services.AddTransient<
+                ILegacyRegistrationOrchestrator,
+                LegacyRegistrationOrchestrator>();
+            services.AddTransient<
+                ILegacyActivationOrchestrator,
+                LegacyActivationOrchestrator>();
+            services.AddTransient<
+                ILegacyLoginOrchestrator,
+                LegacyLoginOrchestrator>();
+        }
+
+        private static void InjectValidators(IServiceCollection services)
+        {
+            services.AddTransient<IItemValidator<AuthNUser>, UserValidator>();
+            services.AddTransient<IItemValidator<AuthNRole>, RoleValidator>();
+
+            services.AddTransient<
+                IItemValidator<LegacyRegistrationRequest>,
+                LegacyRegistrationRequestValidator>();
+            services.AddTransient<
+                IItemValidator<LegacyActivationRequest>,
+                LegacyActivationRequestValidator>();
+            services.AddTransient<
+                IItemValidator<LegacyLoginRequest>,
+                LegacyLoginRequestValidator>();
+        }
+
+        private static void InjectRepositories(IServiceCollection services)
+        {
+            //services.AddTransient<IUserRepository, EfUserRepo>();
+            //services.AddTransient<IRoleRepository, EfRoleRepo>();
         }
     }
 }
