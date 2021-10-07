@@ -3,10 +3,10 @@
 namespace AuthN.Api.Controllers
 {
     /// <summary>
-    /// Controller.
+    /// Controller for trusted 3rd party authentication.
     /// </summary>
     [ApiController]
-    [Route("[controller]")]
+    [Route("auth")]
     public class AuthController : ControllerBase
     {
         /// <summary>

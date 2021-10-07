@@ -29,6 +29,11 @@
   </ItemGroup>
     
   <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.10">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.10" />
     <PackageReference Include="Roslynator.Analyzers" Version="3.2.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -46,6 +51,7 @@
     
   <ItemGroup>
     <ProjectReference Include="..\AuthN.Domain\AuthN.Domain.csproj" />
+    <ProjectReference Include="..\AuthN.Persistence\AuthN.Persistence.csproj" />
   </ItemGroup>
     
   <ItemGroup>

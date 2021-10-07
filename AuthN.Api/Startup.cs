@@ -1,11 +1,15 @@
 using System;
+using Afi.Registration.Persistence.Repositories;
 using AuthN.Domain.Models.Request;
 using AuthN.Domain.Models.Storage;
 using AuthN.Domain.Services.Orchestration;
+using AuthN.Domain.Services.Storage;
 using AuthN.Domain.Services.Validation;
 using AuthN.Domain.Services.Validation.Models;
+using AuthN.Persistence;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -60,8 +64,8 @@ namespace AuthN.Api
             });
 
             var connectionString = Configuration.GetConnectionString("AuthNDb");
-            //services.AddDbContext<AuthNDbContext>(
-            //    options => options.UseSqlServer(connectionString));
+            services.AddDbContext<AuthNDbContext>(
+                options => options.UseSqlServer(connectionString));
 
             InjectOrchestrators(services);
             InjectValidators(services);
@@ -131,8 +135,8 @@ namespace AuthN.Api
 
         private static void InjectRepositories(IServiceCollection services)
         {
-            //services.AddTransient<IUserRepository, EfUserRepo>();
-            //services.AddTransient<IRoleRepository, EfRoleRepo>();
+            services.AddTransient<IUserRepository, EfUserRepository>();
+            services.AddTransient<IRoleRepository, EfRoleRepository>();
         }
     }
 }

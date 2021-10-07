@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using AuthN.Domain.Models.Request;
 using AuthN.Domain.Models.Storage;
 using Microsoft.IdentityModel.Tokens;
 
@@ -65,6 +66,29 @@ namespace AuthN.Domain.Services.Security
                 signingCredentials: credentials);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        /// <summary>
+        /// Generates an access token in an object representing login success.
+        /// </summary>
+        /// <param name="user">The user.</param>
+        /// <param name="tokenDuration">The token duration.</param>
+        /// <param name="tokenIssuer">The token issuer.</param>
+        /// <param name="tokenSecret">The token secret (signing key).</param>
+        /// <returns>Login success object.</returns>
+        public static LoginSuccess Tokenise(
+            this AuthNUser user,
+            int tokenDuration,
+            string tokenIssuer,
+            string tokenSecret)
+        {
+            var expiry = DateTime.Now.AddSeconds(tokenDuration);
+            return new LoginSuccess
+            {
+                User = user,
+                Token = user.CreateJwt(tokenDuration, tokenSecret, tokenIssuer),
+                TokenExpiresOn = expiry,
+            };
         }
     }
 }

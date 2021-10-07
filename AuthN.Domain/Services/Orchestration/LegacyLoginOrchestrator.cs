@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using AuthN.Domain.Exceptions;
 using AuthN.Domain.Models.Request;
 using AuthN.Domain.Models.Storage;
@@ -15,7 +14,7 @@ namespace AuthN.Domain.Services.Orchestration
     {
         private readonly string jwtIssuer;
         private readonly string jwtSecret;
-        private readonly int defaultTokenDurationSeconds;
+        private readonly int defaultTokenSeconds;
         private readonly IItemValidator<LegacyLoginRequest> validator;
         private readonly IUserRepository userRepo;
 
@@ -33,8 +32,8 @@ namespace AuthN.Domain.Services.Orchestration
         {
             jwtIssuer = config["Tokens::Issuer"];
             jwtSecret = config["Tokens::Secret"];
-            var defaultTokenSeconds = config["Tokens::DefTokenDurationSeconds"];
-            defaultTokenDurationSeconds = int.Parse(defaultTokenSeconds);
+            var defaultTokenMins = config["Tokens::DefTokenMinutes"];
+            defaultTokenSeconds = (int)(double.Parse(defaultTokenMins) * 60);
 
             this.validator = validator;
             this.userRepo = userRepo;
@@ -49,8 +48,8 @@ namespace AuthN.Domain.Services.Orchestration
             var user = await AssertUserMatch(request);
             AssertHashMatch(request.Password, user);
 
-            var duration = request.Duration ?? defaultTokenDurationSeconds;
-            return ToLoginResponse(user, duration, jwtIssuer, jwtSecret);
+            var durationSeconds = request.Duration ?? defaultTokenSeconds;
+            return user.Tokenise(durationSeconds, jwtIssuer, jwtSecret);
         }
 
         private async Task<AuthNUser> AssertUserMatch(
@@ -69,21 +68,6 @@ namespace AuthN.Domain.Services.Orchestration
             {
                 throw new OrchestrationException("Invalid password");
             }
-        }
-
-        private static LoginSuccess ToLoginResponse(
-            AuthNUser user,
-            int tokenDuration,
-            string tokenIssuer,
-            string tokenSecret)
-        {
-            var expiry = DateTime.Now.AddSeconds(tokenDuration);
-            return new LoginSuccess
-            {
-                User = user,
-                Token = user.CreateJwt(tokenDuration, tokenSecret, tokenIssuer),
-                TokenExpiresOn = expiry,
-            };
         }
     }
 }

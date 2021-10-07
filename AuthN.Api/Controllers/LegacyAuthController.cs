@@ -10,7 +10,7 @@ namespace AuthN.Api.Controllers
     /// Controller for legacy registration, activation and logging-in.
     /// </summary>
     [ApiController]
-    [Route("[controller]")]
+    [Route("l-auth")]
     public class LegacyAuthController : ControllerBase
     {
         private readonly ILegacyRegistrationOrchestrator legacyRegistrar;

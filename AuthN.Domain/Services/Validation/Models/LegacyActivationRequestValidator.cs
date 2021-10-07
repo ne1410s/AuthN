@@ -1,6 +1,7 @@
 ﻿using System;
 using AuthN.Domain.Models.Request;
 using FluentValidation;
+using Microsoft.Extensions.Configuration;
 
 namespace AuthN.Domain.Services.Validation.Models
 {
@@ -10,28 +11,27 @@ namespace AuthN.Domain.Services.Validation.Models
     public class LegacyActivationRequestValidator
         : FluentValidatorBase<LegacyActivationRequest>
     {
-        private readonly CommonRules commonRules;
+        private readonly int minUsernameLength;
+        private readonly int minEmailLength;
 
         /// <summary>
         /// Initialises a new instance of the
         /// <see cref="LegacyLoginRequestValidator"/> class.
         /// </summary>
-        /// <param name="commonRules">A common set of rules.</param>
-        public LegacyActivationRequestValidator(CommonRules commonRules)
+        /// <param name="config">The configuration.</param>
+        public LegacyActivationRequestValidator(IConfiguration config)
         {
-            this.commonRules = commonRules;
+            var cSection = config.GetSection("Validation");
+            minUsernameLength = int.Parse(cSection["MinUsernameLength"]);
+            minEmailLength = int.Parse(cSection["MinEmailLength"]);
         }
 
         /// <inheritdoc/>
         protected override void DefineModelValidity()
         {
-            RuleFor(x => x.Username)
-                .NotEmpty()
-                .Length(commonRules.UsernameMinLength, 50);
-            RuleFor(x => x.Email)
-                .EmailAddress()
-                .NotEmpty()
-                .Length(commonRules.EmailMinLength, 512);
+            RuleFor(x => x.Username).NotEmpty().Length(minUsernameLength, 50);
+            RuleFor(x => x.Email).EmailAddress().NotEmpty()
+                .Length(minEmailLength, 512);
             RuleFor(x => x.ActivationCode)
                 .NotEqual(Guid.Empty);
         }

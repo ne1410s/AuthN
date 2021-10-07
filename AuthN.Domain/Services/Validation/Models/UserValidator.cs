@@ -1,6 +1,7 @@
 ﻿using System;
 using AuthN.Domain.Models.Storage;
 using FluentValidation;
+using Microsoft.Extensions.Configuration;
 
 namespace AuthN.Domain.Services.Validation.Models
 {
@@ -9,26 +10,26 @@ namespace AuthN.Domain.Services.Validation.Models
     /// </summary>
     public class UserValidator : FluentValidatorBase<AuthNUser>
     {
-        private readonly CommonRules commonRules;
+        private readonly int minUsernameLength;
+        private readonly int minEmailLength;
 
         /// <summary>
         /// Initialises a new instance of the <see cref="UserValidator"/> class.
         /// </summary>
-        /// <param name="commonRules">A common set of rules.</param>
-        public UserValidator(CommonRules commonRules)
+        /// <param name="config">The configuration.</param>
+        public UserValidator(IConfiguration config)
         {
-            this.commonRules = commonRules;
+            var cSection = config.GetSection("Validation");
+            minUsernameLength = int.Parse(cSection["MinUsernameLength"]);
+            minEmailLength = int.Parse(cSection["MinEmailLength"]);
         }
 
         /// <inheritdoc/>
         protected override void DefineModelValidity()
         {
-            var userMinLength = commonRules.UsernameMinLength;
-            RuleFor(x => x.Username).NotEmpty().Length(userMinLength, 50);
-
-            var emailMinLength = commonRules.EmailMinLength;
+            RuleFor(x => x.Username).NotEmpty().Length(minUsernameLength, 50);
             RuleFor(x => x.RegisteredEmail).EmailAddress()
-                .NotEmpty().Length(emailMinLength, 512);
+                .NotEmpty().Length(minEmailLength, 512);
 
             RuleFor(x => x.PasswordSalt).NotEmpty().Length(32, 512);
             RuleFor(x => x.PasswordHash).NotEmpty().Length(32, 512);

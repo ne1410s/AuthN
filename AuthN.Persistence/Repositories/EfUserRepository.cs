@@ -9,15 +9,15 @@ using Microsoft.EntityFrameworkCore;
 namespace Afi.Registration.Persistence.Repositories
 {
     /// <inheritdoc cref="IUserRepository"/>
-    public class UserRepository : IUserRepository
+    public class EfUserRepository : IUserRepository
     {
         private readonly AuthNDbContext db;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="UserRepository"/> class.
+        /// Initializes a new instance of the <see cref="EfUserRepository"/> class.
         /// </summary>
         /// <param name="db">The database context.</param>
-        public UserRepository(AuthNDbContext db)
+        public EfUserRepository(AuthNDbContext db)
         {
             this.db = db;
         }
