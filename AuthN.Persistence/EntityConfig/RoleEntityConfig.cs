@@ -12,12 +12,10 @@ namespace Afi.Registration.Persistence.EntityConfig
         /// <inheritdoc/>
         public void Configure(EntityTypeBuilder<AuthNRole> builder)
         {
-            builder.HasAlternateKey(r => r.Name);
+            builder.Property<int>("RoleId").ValueGeneratedOnAdd();
+            builder.HasKey("RoleId");
 
-            builder.Property<int>("RoleId")
-                .ValueGeneratedOnAdd()
-                .HasAnnotation("Key", 0)
-                .IsRequired();
+            builder.HasAlternateKey(r => r.Name);
 
             builder.Property(r => r.Name).HasMaxLength(30);
         }

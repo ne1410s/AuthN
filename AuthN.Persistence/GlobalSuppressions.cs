@@ -8,6 +8,13 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage(
     "Formatting",
     "RCS0056:A line is too long.",
-    Justification = "Auto generated migration code; typically lengthy",
+    Justification = "Auto generated migration code",
+    Scope = "namespaceanddescendants",
+    Target = "~N:AuthN.Persistence.Migrations")]
+
+[assembly: SuppressMessage(
+    "Simplification",
+    "RCS1021:Convert lambda expression body to expression-body.",
+    Justification = "Auto generated migration code",
     Scope = "namespaceanddescendants",
     Target = "~N:AuthN.Persistence.Migrations")]

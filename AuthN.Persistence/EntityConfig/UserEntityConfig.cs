@@ -12,13 +12,11 @@ namespace Afi.Registration.Persistence.EntityConfig
         /// <inheritdoc/>
         public void Configure(EntityTypeBuilder<AuthNUser> builder)
         {
+            builder.Property<int>("UserId").ValueGeneratedOnAdd();
+            builder.HasKey("UserId");
+
             builder.HasIndex(r => r.Username).IsUnique();
             builder.HasIndex(r => r.RegisteredEmail).IsUnique();
-
-            builder.Property<int>("UserId")
-                .ValueGeneratedOnAdd()
-                .HasAnnotation("Key", 0)
-                .IsRequired();
 
             builder.Property(r => r.Username).IsRequired().HasMaxLength(50);
             builder.Property(r => r.RegisteredEmail).IsRequired()
