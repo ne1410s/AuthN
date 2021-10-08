@@ -16,22 +16,22 @@ namespace AuthN.Domain.Models.Storage
         /// <summary>
         /// Gets the password salt.
         /// </summary>
-        public string PasswordSalt { get; internal set; } = default!;
+        public string PasswordSalt { get; init; } = default!;
 
         /// <summary>
         /// Gets the password hash.
         /// </summary>
-        public string PasswordHash { get; internal set; } = default!;
+        public string PasswordHash { get; init; } = default!;
 
         /// <summary>
         /// Gets the forename.
         /// </summary>
-        public string Forename { get; internal set; } = default!;
+        public string Forename { get; init; } = default!;
 
         /// <summary>
         /// Gets the surname.
         /// </summary>
-        public string Surname { get; internal set; } = default!;
+        public string Surname { get; init; } = default!;
 
         /// <summary>
         /// Gets the email address with which the user is (or is going to be)

@@ -1,5 +1,5 @@
-﻿using Afi.Registration.Persistence.EntityConfig;
-using AuthN.Domain.Models.Storage;
+﻿using AuthN.Domain.Models.Storage;
+using AuthN.Persistence.EntityConfig;
 using Microsoft.EntityFrameworkCore;
 
 namespace AuthN.Persistence

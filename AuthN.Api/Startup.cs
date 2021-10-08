@@ -1,5 +1,4 @@
 using System;
-using Afi.Registration.Persistence.Repositories;
 using AuthN.Domain.Models.Request;
 using AuthN.Domain.Models.Storage;
 using AuthN.Domain.Services.Orchestration;
@@ -7,6 +6,7 @@ using AuthN.Domain.Services.Storage;
 using AuthN.Domain.Services.Validation;
 using AuthN.Domain.Services.Validation.Models;
 using AuthN.Persistence;
+using AuthN.Persistence.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;

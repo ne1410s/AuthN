@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AuthN.Domain.Models.Storage;
 using AuthN.Domain.Services.Storage;
-using AuthN.Persistence;
 using Microsoft.EntityFrameworkCore;
 
-namespace Afi.Registration.Persistence.Repositories
+namespace AuthN.Persistence.Repositories
 {
     /// <inheritdoc cref="IRoleRepository"/>
     public class EfRoleRepository : IRoleRepository
@@ -24,7 +24,9 @@ namespace Afi.Registration.Persistence.Repositories
         /// <inheritdoc/>
         public async Task<IList<AuthNRole>> ListAllAsync()
         {
-            return await db.Roles.ToListAsync();
+            return await db.Roles
+                .OrderBy(r => r.Name)
+                .ToListAsync();
         }
     }
 }

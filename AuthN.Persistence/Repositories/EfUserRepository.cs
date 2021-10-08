@@ -3,10 +3,9 @@ using System.Threading.Tasks;
 using AuthN.Domain.Exceptions;
 using AuthN.Domain.Models.Storage;
 using AuthN.Domain.Services.Storage;
-using AuthN.Persistence;
 using Microsoft.EntityFrameworkCore;
 
-namespace Afi.Registration.Persistence.Repositories
+namespace AuthN.Persistence.Repositories
 {
     /// <inheritdoc cref="IUserRepository"/>
     public class EfUserRepository : IUserRepository

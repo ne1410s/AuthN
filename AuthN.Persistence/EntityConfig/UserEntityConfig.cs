@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Afi.Registration.Persistence.EntityConfig
+namespace AuthN.Persistence.EntityConfig
 {
     /// <summary>
     /// Entity configuration for <see cref="AuthNUser"/>.

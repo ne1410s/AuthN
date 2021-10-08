@@ -10,7 +10,7 @@ namespace AuthN.Domain.Services.Storage
     public interface IRoleRepository
     {
         /// <summary>
-        /// Lists all roles in the system.
+        /// Lists all roles in the system alphabetically.
         /// </summary>
         /// <returns>A list of all roles.</returns>
         public Task<IList<AuthNRole>> ListAllAsync();
