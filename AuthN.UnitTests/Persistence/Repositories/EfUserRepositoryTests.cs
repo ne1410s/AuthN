@@ -19,7 +19,7 @@ namespace AuthN.UnitTests.Persistence.Repositories
         public async Task AddAsync_ValidUser_Success()
         {
             // Arrange
-            var db = await DbUtils.SeedSqliteAync();
+            var db = DbUtils.SeedSqlite();
             var sut = new EfUserRepository(db);
             var validUser = CreateUserValidByDefault();
 
@@ -27,7 +27,8 @@ namespace AuthN.UnitTests.Persistence.Repositories
             await sut.AddAsync(validUser);
 
             // Assert
-            var dbUser = db.Users.SingleOrDefault(u => u.Username == validUser.Username);
+            var dbUser = db.Users.SingleOrDefault(u =>
+                u.Username == validUser.Username);
             dbUser.Should().NotBeNull();
         }
 
@@ -35,7 +36,7 @@ namespace AuthN.UnitTests.Persistence.Repositories
         public async Task AddAsync_MissingRequiredField_ThrowsException()
         {
             // Arrange
-            var db = await DbUtils.SeedSqliteAync();
+            var db = DbUtils.SeedSqlite();
             var sut = new EfUserRepository(db);
             var invalidUser = CreateUserValidByDefault(email: null!);
 
@@ -51,7 +52,7 @@ namespace AuthN.UnitTests.Persistence.Repositories
         {
             // Arrange
             static AuthNUser userGen() => CreateUserValidByDefault();
-            var db = await DbUtils.SeedSqliteAync(s => s.Users.Add(userGen()));
+            var db = DbUtils.SeedSqlite(s => s.Users.Add(userGen()));
             var sut = new EfUserRepository(db);
 
             // Act
@@ -66,8 +67,7 @@ namespace AuthN.UnitTests.Persistence.Repositories
         {
             // Arrange
             var existingUser = CreateUserValidByDefault();
-            var db = await DbUtils.SeedSqliteAync(s =>
-                s.Users.Add(existingUser));
+            var db = DbUtils.SeedSqlite(s => s.Users.Add(existingUser));
             var sut = new EfUserRepository(db);
 
             // Act
@@ -83,10 +83,9 @@ namespace AuthN.UnitTests.Persistence.Repositories
         public async Task ActivateAsync_AlreadyActive_NotUpdated()
         {
             // Arrange
-            var activatedOn = new DateTime(2015, 10, 26);
-            var existingUser = CreateUserValidByDefault(activatedOn: activatedOn);
-            var db = await DbUtils.SeedSqliteAync(s =>
-                s.Users.Add(existingUser));
+            var activated = new DateTime(2015, 10, 26);
+            var existingUser = CreateUserValidByDefault(activated: activated);
+            var db = DbUtils.SeedSqlite(s => s.Users.Add(existingUser));
             var sut = new EfUserRepository(db);
 
             // Act
@@ -95,14 +94,14 @@ namespace AuthN.UnitTests.Persistence.Repositories
             // Assert
             var dbUser = db.Users.SingleOrDefault(u =>
                 u.Username == existingUser.Username);
-            dbUser?.ActivatedOn.Should().BeSameDateAs(activatedOn);
+            dbUser?.ActivatedOn.Should().BeSameDateAs(activated);
         }
 
         [Fact]
         public async Task ActivateAsync_NoSuchUser_ThrowsException()
         {
             // Arrange
-            var db = await DbUtils.SeedSqliteAync();
+            var db = DbUtils.SeedSqlite();
             var sut = new EfUserRepository(db);
 
             // Act
@@ -118,7 +117,7 @@ namespace AuthN.UnitTests.Persistence.Repositories
         public async Task FindByEmailAsync_NoMatch_ReturnsNull()
         {
             // Arrange
-            var db = await DbUtils.SeedSqliteAync();
+            var db = DbUtils.SeedSqlite();
             var sut = new EfUserRepository(db);
 
             // Act
@@ -126,7 +125,6 @@ namespace AuthN.UnitTests.Persistence.Repositories
 
             // Assert
             result.Should().BeNull();
-
         }
 
         [Fact]
@@ -134,12 +132,12 @@ namespace AuthN.UnitTests.Persistence.Repositories
         {
             // Arrange
             var existingUser = CreateUserValidByDefault();
-            var db = await DbUtils.SeedSqliteAync(s =>
-                s.Users.Add(existingUser));
+            var db = DbUtils.SeedSqlite(s => s.Users.Add(existingUser));
             var sut = new EfUserRepository(db);
 
             // Act
-            var result = await sut.FindByEmailAsync(existingUser.RegisteredEmail);
+            var result = await sut.FindByEmailAsync(
+                existingUser.RegisteredEmail);
 
             // Assert
             result.Should().NotBeNull();
@@ -150,7 +148,7 @@ namespace AuthN.UnitTests.Persistence.Repositories
         public async Task FindByUsernameAsync_NoMatch_ReturnsNull()
         {
             // Arrange
-            var db = await DbUtils.SeedSqliteAync();
+            var db = DbUtils.SeedSqlite();
             var sut = new EfUserRepository(db);
 
             // Act
@@ -158,7 +156,6 @@ namespace AuthN.UnitTests.Persistence.Repositories
 
             // Assert
             result.Should().BeNull();
-
         }
 
         [Fact]
@@ -166,8 +163,7 @@ namespace AuthN.UnitTests.Persistence.Repositories
         {
             // Arrange
             var existingUser = CreateUserValidByDefault();
-            var db = await DbUtils.SeedSqliteAync(s =>
-                s.Users.Add(existingUser));
+            var db = DbUtils.SeedSqlite(s => s.Users.Add(existingUser));
             var sut = new EfUserRepository(db);
 
             // Act
@@ -181,7 +177,7 @@ namespace AuthN.UnitTests.Persistence.Repositories
         private static AuthNUser CreateUserValidByDefault(
             string username = "bobsmith",
             string email = "bob@test.co",
-            DateTime? activatedOn = null) => new()
+            DateTime? activated = null) => new()
         {
             Username = username,
             RegisteredEmail = email,
@@ -189,7 +185,7 @@ namespace AuthN.UnitTests.Persistence.Repositories
             Surname = string.Empty,
             PasswordSalt = string.Empty,
             PasswordHash = string.Empty,
-            ActivatedOn = activatedOn,
+            ActivatedOn = activated,
         };
     }
 }

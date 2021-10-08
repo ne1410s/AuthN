@@ -9,7 +9,8 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace RefactorThis.IntegrationTests
 {
-    public class IntegrationTestingWebAppFactory : WebApplicationFactory<Startup>
+    public class IntegrationTestingWebAppFactory
+        : WebApplicationFactory<Startup>
     {
         private readonly Action<AuthNDbContext>? seedAction;
 
@@ -23,12 +24,12 @@ namespace RefactorThis.IntegrationTests
         {
             builder.ConfigureServices(services =>
             {
-                var descriptor = services.Single(
-                    d => d.ServiceType == typeof(DbContextOptions<AuthNDbContext>));
+                var descriptor = services.Single(d =>
+                    d.ServiceType == typeof(DbContextOptions<AuthNDbContext>));
 
                 services.Remove(descriptor);
                 services.AddDbContext<AuthNDbContext>(options =>
-                    options.UseSqlServer("soem in-mem solution!"));
+                    options.UseSqlite("Data Source=integration-test.db"));
 
                 var sp = services.BuildServiceProvider();
                 using var scope = sp.CreateScope();
@@ -36,6 +37,10 @@ namespace RefactorThis.IntegrationTests
                 var scopedServices = scope.ServiceProvider;
                 var db = scopedServices.GetRequiredService<AuthNDbContext>();
                 db.Database.OpenConnection();
+
+                // This method provides an up-to-date schema without applying
+                // migrations meaning the sql technology is interchangeable
+                // (provided there is no vendor-specific fluent entity config).
                 db.Database.EnsureCreated();
 
                 db.Users.RemoveRange(db.Users);

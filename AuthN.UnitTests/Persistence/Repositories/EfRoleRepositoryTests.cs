@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using AuthN.Domain.Models.Storage;
 using AuthN.Persistence.Repositories;
 using FluentAssertions;
@@ -16,7 +15,7 @@ namespace AuthN.UnitTests.Persistence.Repositories
         public async Task ListAllAsync_NonePresent_ReturnsEmptyList()
         {
             // Arrange
-            var db = await DbUtils.SeedSqliteAync();
+            var db = DbUtils.SeedSqlite();
             var sut = new EfRoleRepository(db);
 
             // Act
@@ -35,15 +34,14 @@ namespace AuthN.UnitTests.Persistence.Repositories
                 new AuthNRole { Name = "role1" },
                 new AuthNRole { Name = "role2" },
             };
-            var db = await DbUtils.SeedSqliteAync(s =>
-                s.Roles.AddRange(existingRoles));
+            var db = DbUtils.SeedSqlite(s => s.Roles.AddRange(existingRoles));
             var sut = new EfRoleRepository(db);
 
             // Act
             var result = await sut.ListAllAsync();
 
             // Assert
-            result.Count.Should().Be(existingRoles.Count());
+            result.Count.Should().Be(existingRoles.Length);
         }
 
         [Fact]
@@ -51,7 +49,7 @@ namespace AuthN.UnitTests.Persistence.Repositories
         {
             // Arrange
             var roleB = new AuthNRole { Name = "bbb" };
-            var db = await DbUtils.SeedSqliteAync(s => s.Roles.Add(roleB));
+            var db = DbUtils.SeedSqlite(s => s.Roles.Add(roleB));
             var roleA = new AuthNRole { Name = "aaa" };
             db.Roles.Add(roleA);
             await db.SaveChangesAsync();
@@ -64,9 +62,9 @@ namespace AuthN.UnitTests.Persistence.Repositories
             var result = await sut.ListAllAsync();
 
             // Assert
-            result.ElementAt(0).Name.Should().Be(roleA.Name);
-            result.ElementAt(1).Name.Should().Be(roleB.Name);
-            result.ElementAt(2).Name.Should().Be(roleC.Name);
+            result[0].Name.Should().Be(roleA.Name);
+            result[1].Name.Should().Be(roleB.Name);
+            result[2].Name.Should().Be(roleC.Name);
         }
     }
 }

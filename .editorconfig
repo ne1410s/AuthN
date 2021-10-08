@@ -1,5 +1,4 @@
-# Global Analyzer Config file
-is_global = true
+﻿[*.cs]
 
 # .NET formatting rules https://docs.microsoft.com/en-us/dotnet/fundamentals/code-analysis/code-style-rule-options
 end_of_line = crlf

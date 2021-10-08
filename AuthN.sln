@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthN.Api", "AuthN.Api\Auth
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{19472C20-E753-4F75-BFA4-5274A5031462}"
 	ProjectSection(SolutionItems) = preProject
-		.analyzerconfig = .analyzerconfig
+		.editorconfig = .editorconfig
 		.gitignore = .gitignore
 		.travis.yml = .travis.yml
 		coverlet.runsettings = coverlet.runsettings
@@ -22,7 +22,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthN.IntegrationTests", "A
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthN.Domain", "AuthN.Domain\AuthN.Domain.csproj", "{00388116-9F3E-4CEF-800D-7558B1992BF8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthN.Persistence", "AuthN.Persistence\AuthN.Persistence.csproj", "{E5ED88D4-83B2-4E3B-B1C4-55E61D265A3F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthN.Persistence", "AuthN.Persistence\AuthN.Persistence.csproj", "{E5ED88D4-83B2-4E3B-B1C4-55E61D265A3F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
