@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Xunit;
 
 namespace AuthN.UnitTests.Domain
 {
-    class SecurityExtensionsTests
+    public class SecurityExtensionsTests
     {
+        [Fact]
+        public void Test1()
+        { }
     }
 }

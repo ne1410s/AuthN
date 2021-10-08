@@ -41,17 +41,5 @@
   <ItemGroup>
     <ProjectReference Include="..\AuthN.Api\AuthN.Api.csproj" />
   </ItemGroup>
-    
-  <ItemGroup>
-    <Folder Include="Persistence\" />
-  </ItemGroup>
-    
-  <ItemGroup>
-    <EditorConfigFiles Remove="..\.analyzerconfig" />
-  </ItemGroup>
-    
-  <ItemGroup>
-    <EditorConfigFiles Remove="..\.analyzerconfig" />
-  </ItemGroup>
 
 </Project>

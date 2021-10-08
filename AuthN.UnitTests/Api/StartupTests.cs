@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Xunit;
 
 namespace AuthN.UnitTests.Api
 {
-    class StartupTests
+    public class StartupTests
     {
+        [Fact]
+        public void Test1()
+        { }
     }
 }

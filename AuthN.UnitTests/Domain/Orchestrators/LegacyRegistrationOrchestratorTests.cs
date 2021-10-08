@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Xunit;
 
 namespace AuthN.UnitTests.Domain.Orchestrators.Orchestrators
 {
-    class LegacyRegistrationOrchestratorTests
+    public class LegacyRegistrationOrchestratorTests
     {
+        [Fact]
+        public void Test1()
+        { }
     }
 }
