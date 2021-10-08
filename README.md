@@ -1,10 +1,12 @@
 ## Test Coverage
 ```powershell
-# obtain coverlet test coverage results
+# obtain fresh coverlet test coverage results
+gci **/TestResults/ | ri -r
 dotnet test --settings coverlet.runsettings
 
-# generate html summary report from coverlet coverage results
+# obtain fresh report(s) from coverlet coverage results
 # PREREQ> dotnet tool install -g dotnet-reportgenerator-globaltool
+gci coveragerep* | ri -r
 reportgenerator -targetdir:coveragereport -reports:**/coverage.cobertura.xml -reporttypes:"html;htmlsummary" 
 ```
 
