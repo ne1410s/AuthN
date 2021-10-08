@@ -64,6 +64,6 @@ namespace AuthN.Domain.Models.Storage
         /// <summary>
         /// Gets the roles to which the user belongs.
         /// </summary>
-        public IReadOnlySet<AuthNRole> Roles { get; init; } = default!;
+        public IReadOnlyList<AuthNRole> Roles { get; init; } = default!;
     }
 }

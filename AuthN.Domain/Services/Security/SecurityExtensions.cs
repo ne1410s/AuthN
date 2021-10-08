@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -51,9 +50,9 @@ namespace AuthN.Domain.Services.Security
                 throw new ArgumentException("Issuer is required");
             }
 
-            if (string.IsNullOrWhiteSpace(signingKey))
+            if (signingKey == null || signingKey.Length < 16)
             {
-                throw new ArgumentException("Signing key is required");
+                throw new ArgumentException("Key must be >= 16 characters");
             }
 
             if (durationSeconds == 0)
@@ -66,8 +65,6 @@ namespace AuthN.Domain.Services.Security
             const string algorithm = SecurityAlgorithms.HmacSha256;
             var credentials = new SigningCredentials(securityKey, algorithm);
 
-            var roles = user.Roles ?? new ReadOnlyCollection<AuthNRole>(
-                new List<AuthNRole>()).Set
             var claims = new List<Claim>()
             {
                 new Claim(JwtRegisteredClaimNames.Iss, issuer),

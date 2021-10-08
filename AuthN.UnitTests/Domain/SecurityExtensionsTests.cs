@@ -12,7 +12,8 @@ namespace AuthN.UnitTests.Domain
     public class SecurityExtensionsTests
     {
         private const string NaiveBase64Regex = @"^[A-Za-z0-9\/+]+={0,3}$";
-        private const string NaiveJwtRegex = "^[A-Za-z0-9.]+$";
+        private const string NaiveJwtRegex = "^[A-Za-z0-9._-]+$";
+        private const string ValidSigningKey = "jaboutlongenough";
 
         [Theory]
         [InlineData("text", "salt")]
@@ -50,6 +51,7 @@ namespace AuthN.UnitTests.Domain
         [InlineData(null)]
         [InlineData("")]
         [InlineData(" ")]
+        [InlineData("notquite16chars")]
         public void CreateJwt_BadKey_ThrowsException(string key)
         {
             // Arrange
@@ -60,7 +62,7 @@ namespace AuthN.UnitTests.Domain
 
             // Assert
             act.Should().Throw<ArgumentException>()
-                .WithMessage("Signing key is required");
+                .WithMessage("Key must be >= 16 characters");
         }
 
         [Fact]
@@ -71,7 +73,8 @@ namespace AuthN.UnitTests.Domain
             const uint badDuration = 0;
 
             // Act
-            Action act = () => user.CreateJwt(badDuration, "key", "issuer");
+            Action act = () =>
+                user.CreateJwt(badDuration, ValidSigningKey, "issuer");
 
             // Assert
             act.Should().Throw<ArgumentException>()
@@ -82,13 +85,26 @@ namespace AuthN.UnitTests.Domain
         public void CreateJwt_ValidRequest_ProducesExpectedPattern()
         {
             // Arrange
-            var user = new AuthNUser();
+            var user = GetValidUser();
 
             // Act
-            var result = user.CreateJwt(1, "key", "issuer");
+            var result = user.CreateJwt(1, ValidSigningKey, "issuer");
 
             // Assert
             result.Should().MatchRegex(NaiveJwtRegex);
         }
+
+        //TODO:
+
+
+            // Check contents (roundtrip)
+
+        private static AuthNUser GetValidUser() => new()
+        {
+            Username = "bobsmith",
+            RegisteredEmail = "bob@test.co",
+            Forename = "bob",
+            Surname = "smith",
+        };
     }
 }

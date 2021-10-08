@@ -49,13 +49,10 @@ namespace AuthN.UnitTests.Persistence.Repositories
         {
             // Arrange
             var roleB = new AuthNRole { Name = "bbb" };
-            var db = DbUtils.SeedSqlite(s => s.Roles.Add(roleB));
             var roleA = new AuthNRole { Name = "aaa" };
-            db.Roles.Add(roleA);
-            await db.SaveChangesAsync();
             var roleC = new AuthNRole { Name = "ccc" };
-            db.Roles.Add(roleC);
-            await db.SaveChangesAsync();
+            var db = DbUtils.SeedSqlite(s =>
+                s.Roles.AddRange(roleB, roleA, roleC));
             var sut = new EfRoleRepository(db);
 
             // Act
