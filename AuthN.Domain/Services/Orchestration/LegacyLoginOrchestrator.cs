@@ -14,7 +14,7 @@ namespace AuthN.Domain.Services.Orchestration
     {
         private readonly string jwtIssuer;
         private readonly string jwtSecret;
-        private readonly int defaultTokenSeconds;
+        private readonly uint defaultTokenSecs;
         private readonly IItemValidator<LegacyLoginRequest> validator;
         private readonly IUserRepository userRepo;
 
@@ -33,7 +33,7 @@ namespace AuthN.Domain.Services.Orchestration
             jwtIssuer = config["Tokens::Issuer"];
             jwtSecret = config["Tokens::Secret"];
             var defaultTokenMins = config["Tokens::DefTokenMinutes"];
-            defaultTokenSeconds = (int)(double.Parse(defaultTokenMins) * 60);
+            defaultTokenSecs = (uint)(double.Parse(defaultTokenMins) * 60);
 
             this.validator = validator;
             this.userRepo = userRepo;
@@ -48,7 +48,7 @@ namespace AuthN.Domain.Services.Orchestration
             var user = await AssertUserMatch(request);
             AssertHashMatch(request.Password, user);
 
-            var durationSeconds = request.Duration ?? defaultTokenSeconds;
+            var durationSeconds = (uint?)request.Duration ?? defaultTokenSecs;
             return user.Tokenise(durationSeconds, jwtIssuer, jwtSecret);
         }
 

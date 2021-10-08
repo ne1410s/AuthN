@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -37,18 +39,36 @@ namespace AuthN.Domain.Services.Security
         /// <param name="signingKey">The signing key.</param>
         /// <param name="issuer">The issuing application.</param>
         /// <returns>A Json Web Token.</returns>
+        /// <exception cref="ArgumentException"/>
         public static string CreateJwt(
             this AuthNUser user,
-            int durationSeconds,
+            uint durationSeconds,
             string signingKey,
             string issuer)
         {
+            if (string.IsNullOrWhiteSpace(issuer))
+            {
+                throw new ArgumentException("Issuer is required");
+            }
+
+            if (string.IsNullOrWhiteSpace(signingKey))
+            {
+                throw new ArgumentException("Signing key is required");
+            }
+
+            if (durationSeconds == 0)
+            {
+                throw new ArgumentException("Duration must be > 0 seconds");
+            }
+
             var keyBytes = Encoding.UTF8.GetBytes(signingKey);
             var securityKey = new SymmetricSecurityKey(keyBytes);
             const string algorithm = SecurityAlgorithms.HmacSha256;
             var credentials = new SigningCredentials(securityKey, algorithm);
 
-            var claims = new[]
+            var roles = user.Roles ?? new ReadOnlyCollection<AuthNRole>(
+                new List<AuthNRole>()).Set
+            var claims = new List<Claim>()
             {
                 new Claim(JwtRegisteredClaimNames.Iss, issuer),
                 new Claim(JwtRegisteredClaimNames.Sub, user.Username),
@@ -78,7 +98,7 @@ namespace AuthN.Domain.Services.Security
         /// <returns>Login success object.</returns>
         public static LoginSuccess Tokenise(
             this AuthNUser user,
-            int tokenDuration,
+            uint tokenDuration,
             string tokenIssuer,
             string tokenSecret)
         {
