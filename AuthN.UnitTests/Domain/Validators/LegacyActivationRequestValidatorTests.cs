@@ -49,7 +49,7 @@ namespace AuthN.UnitTests.Domain.Validators
 
         [Theory]
         [InlineData(6, 5)]
-        public void AssertValid_ShortUsername_ThrowsException(
+        public void AssertValid_BadLengthUsername_ThrowsException(
             int ruleMinLength,
             int actualFieldLength)
         {
@@ -89,7 +89,7 @@ namespace AuthN.UnitTests.Domain.Validators
 
         [Theory]
         [InlineData(6, 5)]
-        public void AssertValid_ShortEmail_ThrowsException(
+        public void AssertValid_BadLengthEmail_ThrowsException(
             int ruleMinLength,
             int actualFieldLength)
         {

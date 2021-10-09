@@ -29,16 +29,19 @@ namespace AuthN.Domain.Services.Validation.Models
             var maxTokenMinutes = double.Parse(cSection["MaxTokenMinutes"]);
 
             RuleFor(x => x.Username).Length(minUsernameLength, 50);
-            RuleFor(x => x.Username).NotEmpty()
-                .When(x => string.IsNullOrWhiteSpace(x.Email))
-                .WithMessage("Either username or email must be provided.");
 
-            RuleFor(x => x.Email).EmailAddress().Length(minEmailLength, 512);
+            RuleFor(x => x.Email).EmailAddress()
+                .Length(minEmailLength, 512);
+
             RuleFor(x => x.Email).NotEmpty()
-                .When(x => string.IsNullOrWhiteSpace(x.Username))
-                .WithMessage("Either username or email must be provided.");
+                .When(x => x.Username == null)
+                .WithMessage("Username or email must be provided.");
+            RuleFor(x => x.Email).Empty()
+                .When(x => !string.IsNullOrWhiteSpace(x.Username))
+                .WithMessage("Username or email must be provided, not both.");
 
-            RuleFor(x => x.Password).NotEmpty().Length(minPasswordLength, 512);
+            RuleFor(x => x.Password).NotEmpty()
+                .Length(minPasswordLength, 512);
             RuleFor(x => x.Password).IsSufficientlyComplex();
 
             var maxTokenSeconds = (int)(maxTokenMinutes * 60);
