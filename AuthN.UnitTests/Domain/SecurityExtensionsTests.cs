@@ -1,4 +1,7 @@
 ﻿using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Text.Json;
 using AuthN.Domain.Models.Storage;
 using AuthN.Domain.Services.Security;
 using FluentAssertions;
@@ -94,17 +97,60 @@ namespace AuthN.UnitTests.Domain
             result.Should().MatchRegex(NaiveJwtRegex);
         }
 
-        //TODO:
+        [Fact]
+        public void CreateJwt_WithFullClaims_ParsesOk()
+        {
+            // Arrange
+            var user = GetValidUser("role1", "role2");
+            const string issuer = "issuer";
 
+            // Act
+            var result = user.CreateJwt(60, ValidSigningKey, issuer);
 
-            // Check contents (roundtrip)
+            // Assert
+            var jwtHandler = new JwtSecurityTokenHandler();
+            var parsedJwt = jwtHandler.ReadJwtToken(result);
+            parsedJwt.Issuer.Should().Be(issuer);
+            parsedJwt.Subject.Should().Be(user.Username);
+            GetClaim(parsedJwt, JwtRegisteredClaimNames.Email)
+                .Should().Be(user.RegisteredEmail);
+            GetClaim(parsedJwt, JwtRegisteredClaimNames.GivenName)
+                .Should().Be(user.Forename);
+            GetClaim(parsedJwt, JwtRegisteredClaimNames.FamilyName)
+                .Should().Be(user.Surname);
+            GetClaim(parsedJwt, JwtRegisteredClaimNames.Jti)
+                .Should().NotBeNullOrWhiteSpace();
+            var rolesJson = GetClaim(parsedJwt, "Roles")!;
+            var roles = JsonSerializer.Deserialize<string[]>(rolesJson);
+            roles.Should().Contain(user.Roles[0].Name);
+            roles.Should().Contain(user.Roles[1].Name);
+        }
 
-        private static AuthNUser GetValidUser() => new()
+        [Fact]
+        public void Tokenise_ValidInput_ReturnsResult()
+        {
+            // Arrange
+            var user = GetValidUser();
+
+            // Act
+            var result = user.Tokenise(10, "issuer", ValidSigningKey);
+
+            // Assert
+            result.User.Should().Be(user);
+            result.Token.Should().NotBeNullOrWhiteSpace();
+            result.TokenExpiresOn.Should().BeAfter(DateTime.Now);
+        }
+
+        private static AuthNUser GetValidUser(params string[] roles) => new()
         {
             Username = "bobsmith",
             RegisteredEmail = "bob@test.co",
             Forename = "bob",
             Surname = "smith",
+            Roles = roles.Select(r => new AuthNRole { Name = r }).ToList()
         };
+
+        private static string? GetClaim(JwtSecurityToken jwt, string name)
+            => jwt.Claims.SingleOrDefault(c => c.Type == name)?.Value;
     }
 }

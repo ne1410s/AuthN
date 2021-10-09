@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -64,6 +65,7 @@ namespace AuthN.Domain.Services.Security
             var securityKey = new SymmetricSecurityKey(keyBytes);
             const string algorithm = SecurityAlgorithms.HmacSha256;
             var credentials = new SigningCredentials(securityKey, algorithm);
+            var roleNames = user.Roles.Select(r => r.Name);
 
             var claims = new List<Claim>()
             {
@@ -73,7 +75,7 @@ namespace AuthN.Domain.Services.Security
                 new Claim(JwtRegisteredClaimNames.Jti, $"{Guid.NewGuid()}"),
                 new Claim(JwtRegisteredClaimNames.GivenName, user.Forename),
                 new Claim(JwtRegisteredClaimNames.FamilyName, user.Surname),
-                new Claim("Roles", JsonSerializer.Serialize(user.Roles)),
+                new Claim("Roles", JsonSerializer.Serialize(roleNames)),
             };
 
             var token = new JwtSecurityToken(
