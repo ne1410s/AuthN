@@ -27,7 +27,7 @@ namespace AuthN.Domain.Services.Orchestration
             IItemValidator<LegacyActivationRequest> validator,
             IUserRepository userRepo)
         {
-            var windowHours = config["LegacyAuth::ActivationWindowHours"];
+            var windowHours = config["LegacyAuth:ActivationWindowHours"];
             activationWindow = TimeSpan.FromHours(double.Parse(windowHours));
 
             this.validator = validator;

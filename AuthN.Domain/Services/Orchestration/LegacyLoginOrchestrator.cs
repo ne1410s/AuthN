@@ -30,9 +30,9 @@ namespace AuthN.Domain.Services.Orchestration
             IItemValidator<LegacyLoginRequest> validator,
             IUserRepository userRepo)
         {
-            jwtIssuer = config["Tokens::Issuer"];
-            jwtSecret = config["Tokens::Secret"];
-            var defaultTokenMins = config["Tokens::DefTokenMinutes"];
+            jwtIssuer = config["Tokens:Issuer"];
+            jwtSecret = config["Tokens:Secret"];
+            var defaultTokenMins = config["Tokens:DefTokenMinutes"];
             defaultTokenSecs = (uint)(double.Parse(defaultTokenMins) * 60);
 
             this.validator = validator;

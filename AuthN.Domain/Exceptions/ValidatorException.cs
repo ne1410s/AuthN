@@ -14,6 +14,7 @@ namespace AuthN.Domain.Exceptions
         /// </summary>
         /// <param name="invalidItems">Invalid items.</param>
         public ValidatorException(params InvalidItem[] invalidItems)
+            : base("Invalid instance received.")
         {
             InvalidItems = invalidItems;
         }

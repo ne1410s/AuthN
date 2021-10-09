@@ -2,6 +2,7 @@
 using AuthN.Domain.Exceptions;
 using FluentValidation;
 using FluentValidation.Results;
+using Microsoft.Extensions.Configuration;
 
 namespace AuthN.Domain.Services.Validation
 {
@@ -16,9 +17,9 @@ namespace AuthN.Domain.Services.Validation
         /// Initialises a new instance of the
         /// <see cref="FluentValidatorBase{T}"/> class.
         /// </summary>
-        protected FluentValidatorBase()
+        protected FluentValidatorBase(IConfiguration config)
         {
-            this.DefineModelValidity();
+            this.DefineModelValidity(config);
         }
 
         /// <inheritdoc/>
@@ -42,6 +43,6 @@ namespace AuthN.Domain.Services.Validation
         /// <summary>
         /// Defines the fluent validation rules.
         /// </summary>
-        protected abstract void DefineModelValidity();
+        protected abstract void DefineModelValidity(IConfiguration config);
     }
 }

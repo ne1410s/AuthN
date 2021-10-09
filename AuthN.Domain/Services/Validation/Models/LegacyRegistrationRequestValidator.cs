@@ -10,26 +10,23 @@ namespace AuthN.Domain.Services.Validation.Models
     public class LegacyRegistrationRequestValidator
         : FluentValidatorBase<LegacyRegistrationRequest>
     {
-        private readonly int minUsernameLength;
-        private readonly int minEmailLength;
-        private readonly int minPasswordLength;
-
         /// <summary>
         /// Initialises a new instance of the
         /// <see cref="LegacyRegistrationRequestValidator"/> class.
         /// </summary>
         /// <param name="config">The configuration.</param>
         public LegacyRegistrationRequestValidator(IConfiguration config)
-        {
-            var cSection = config.GetSection("Validation");
-            minUsernameLength = int.Parse(cSection["MinUsernameLength"]);
-            minEmailLength = int.Parse(cSection["MinEmailLength"]);
-            minPasswordLength = int.Parse(cSection["MinPasswordLength"]);
-        }
+            : base(config)
+        { }
 
         /// <inheritdoc/>
-        protected override void DefineModelValidity()
+        protected override void DefineModelValidity(IConfiguration config)
         {
+            var cSection = config.GetSection("Validation");
+            var minUsernameLength = int.Parse(cSection["MinUsernameLength"]);
+            var minEmailLength = int.Parse(cSection["MinEmailLength"]);
+            var minPasswordLength = int.Parse(cSection["MinPasswordLength"]);
+
             RuleFor(x => x.Username).NotEmpty().Length(minUsernameLength, 50);
             RuleFor(x => x.Email).EmailAddress().NotEmpty()
                 .Length(minEmailLength, 512);

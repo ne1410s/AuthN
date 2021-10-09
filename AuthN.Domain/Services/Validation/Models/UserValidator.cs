@@ -10,23 +10,21 @@ namespace AuthN.Domain.Services.Validation.Models
     /// </summary>
     public class UserValidator : FluentValidatorBase<AuthNUser>
     {
-        private readonly int minUsernameLength;
-        private readonly int minEmailLength;
-
         /// <summary>
         /// Initialises a new instance of the <see cref="UserValidator"/> class.
         /// </summary>
         /// <param name="config">The configuration.</param>
         public UserValidator(IConfiguration config)
-        {
-            var cSection = config.GetSection("Validation");
-            minUsernameLength = int.Parse(cSection["MinUsernameLength"]);
-            minEmailLength = int.Parse(cSection["MinEmailLength"]);
-        }
+            : base(config)
+        { }
 
         /// <inheritdoc/>
-        protected override void DefineModelValidity()
+        protected override void DefineModelValidity(IConfiguration config)
         {
+            var cSection = config.GetSection("Validation");
+            var minUsernameLength = int.Parse(cSection["MinUsernameLength"]);
+            var minEmailLength = int.Parse(cSection["MinEmailLength"]);
+
             RuleFor(x => x.Username).NotEmpty().Length(minUsernameLength, 50);
             RuleFor(x => x.RegisteredEmail).EmailAddress()
                 .NotEmpty().Length(minEmailLength, 512);
