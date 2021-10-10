@@ -16,21 +16,21 @@ namespace AuthN.Domain.Services.Validation
         public static IRuleBuilderOptions<T, string> IsSufficientlyComplex<T>(
             this IRuleBuilder<T, string> ruleBuilder)
         {
-            const string containsText = "Password must contain at least one";
+            const string containsText = "'Password' must contain at least one";
             return ruleBuilder.ChildRules(a =>
             {
                 a.RuleFor(x => x)
                     .Matches("[A-Z]")
-                    .WithMessage($"{containsText} capital letter");
+                    .WithMessage($"{containsText} upper case letter.");
                 a.RuleFor(x => x)
                     .Matches("[a-z]")
-                    .WithMessage($"{containsText} lower case letter");
+                    .WithMessage($"{containsText} lower case letter.");
                 a.RuleFor(x => x)
-                    .Matches("\\d")
-                    .WithMessage($"{containsText} number");
+                    .Matches("[0-9]")
+                    .WithMessage($"{containsText} number.");
                 a.RuleFor(x => x)
-                    .Matches("\\W")
-                    .WithMessage($"{containsText} special character");
+                    .Matches("[^a-zA-Z0-9\\s]")
+                    .WithMessage($"{containsText} special character.");
             });
         }
     }

@@ -148,10 +148,123 @@ namespace AuthN.UnitTests.Domain.Validators
                 "Username or email must be provided, not both.");
         }
 
-        // TODO: Moar tests!!
-        // TODO: PASSWORD-complexity
-        // TODO: DURATION
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData(" ")]
+        public void AssertValid_MissingPassword_ThrowsException(string password)
+        {
+            // Arrange
+            var sut = GetSutWithConfig();
+            var invalidSubject = GetSubjectValidByDefault(password: password);
 
+            // Act
+            Action act = () => sut.AssertValid(invalidSubject);
+
+            // Assert
+            var ex = act.Should().Throw<ValidatorException>().Which;
+            var messages = ex.InvalidItems.Select(item => item.ErrorMessage);
+            messages.Should().Contain("'Password' must not be empty.");
+        }
+
+        [Fact]
+        public void AssertValid_SimplePasswordNoUpperCase_ThrowsException()
+        {
+            // Arrange
+            var sut = GetSutWithConfig();
+            const string invalidPassword = "a";
+            var invalidSubject = GetSubjectValidByDefault(
+                password: invalidPassword);
+
+            // Act
+            Action act = () => sut.AssertValid(invalidSubject);
+
+            // Assert
+            var ex = act.Should().Throw<ValidatorException>().Which;
+            var messages = ex.InvalidItems.Select(item => item.ErrorMessage);
+            messages.Should().Contain(
+                "'Password' must contain at least one upper case letter.");
+        }
+
+        [Fact]
+        public void AssertValid_SimplePasswordNoLowerCase_ThrowsException()
+        {
+            // Arrange
+            var sut = GetSutWithConfig();
+            const string invalidPassword = "A";
+            var invalidSubject = GetSubjectValidByDefault(
+                password: invalidPassword);
+
+            // Act
+            Action act = () => sut.AssertValid(invalidSubject);
+
+            // Assert
+            var ex = act.Should().Throw<ValidatorException>().Which;
+            var messages = ex.InvalidItems.Select(item => item.ErrorMessage);
+            messages.Should().Contain(
+                "'Password' must contain at least one lower case letter.");
+        }
+
+        [Fact]
+        public void AssertValid_SimplePasswordNoNumber_ThrowsException()
+        {
+            // Arrange
+            var sut = GetSutWithConfig();
+            const string invalidPassword = "a";
+            var invalidSubject = GetSubjectValidByDefault(
+                password: invalidPassword);
+
+            // Act
+            Action act = () => sut.AssertValid(invalidSubject);
+
+            // Assert
+            var ex = act.Should().Throw<ValidatorException>().Which;
+            var messages = ex.InvalidItems.Select(item => item.ErrorMessage);
+            messages.Should().Contain(
+                "'Password' must contain at least one number.");
+        }
+
+        [Theory]
+        [InlineData("a")]
+        [InlineData("aB 12")]
+        public void AssertValid_SimplePasswordNoSpecials_ThrowsException(
+            string invalidPassword)
+        {
+            // Arrange
+            var sut = GetSutWithConfig();
+            var invalidSubject = GetSubjectValidByDefault(
+                password: invalidPassword);
+
+            // Act
+            Action act = () => sut.AssertValid(invalidSubject);
+
+            // Assert
+            var ex = act.Should().Throw<ValidatorException>().Which;
+            var messages = ex.InvalidItems.Select(item => item.ErrorMessage);
+            messages.Should().Contain(
+                "'Password' must contain at least one special character.");
+        }
+
+        [Theory]
+        [InlineData(4)]
+        [InlineData(11, 10)]
+        public void AssertValid_BadRangeDuration_ThrowsException(
+            int duration,
+            int maxDuration = 600)
+        {
+            // Arrange
+            var sut = GetSutWithConfig(maxTokenMinutes: maxDuration / 60d);
+            var invalidSubject = GetSubjectValidByDefault(duration: duration);
+
+            // Act
+            Action act = () => sut.AssertValid(invalidSubject);
+
+            // Assert
+            var ex = act.Should().Throw<ValidatorException>().Which;
+            var messages = ex.InvalidItems.Select(item => item.ErrorMessage);
+            messages.Should().Contain(m => m.StartsWith(
+                $"'Duration' must be between 5 and {maxDuration}."));
+        }
 
         private static LegacyLoginRequestValidator GetSutWithConfig(
             int minUsernameLength = 6,
