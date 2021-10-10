@@ -1,12 +1,67 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using AuthN.Domain.Exceptions;
+using AuthN.Domain.Models.Storage;
+using AuthN.Domain.Services.Validation.Models;
+using FluentAssertions;
+using Xunit;
 
 namespace AuthN.UnitTests.Domain.Validators
 {
-    class UserValidatorTests
+    /// <summary>
+    /// Tests for <see cref="UserValidator"/>
+    /// </summary>
+    public class UserValidatorTests
     {
+        [Fact]
+        public void AssertValid_ValidRequest_DoesNotError()
+        {
+            // Arrange
+            var sut = GetSutWithConfig();
+            var validSubject = GetSubjectValidByDefault();
+
+            // Act
+            Action act = () => sut.AssertValid(validSubject);
+
+            // Assert
+            act.Should().NotThrow<ValidatorException>();
+        }
+
+
+
+        private static UserValidator GetSutWithConfig(
+            int minUsernameLength = 6,
+            int minEmailLength = 6)
+        {
+            var config = new Dictionary<string, string>
+            {
+                { "Validation:MinUsernameLength", $"{minUsernameLength}" },
+                { "Validation:MinEmailLength", $"{minEmailLength}" },
+            };
+
+            var stubConfig = config.Stub();
+            return new UserValidator(stubConfig);
+        }
+
+        private static AuthNUser GetSubjectValidByDefault(
+            string email = "bob@test.co",
+            string username = "bobsmith",
+            string passwordSalt = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            string passwardHash = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            string forename = "Bob",
+            string surname = "Smith",
+            DateTime? createdOn = null)
+        {
+            return new()
+            {
+                Username = username,
+                RegisteredEmail = email,
+                PasswordSalt = passwordSalt,
+                PasswordHash = passwardHash,
+                Forename = forename,
+                Surname = surname,
+                CreatedOn = createdOn ?? DateTime.Today,
+            };
+        }
     }
 }
