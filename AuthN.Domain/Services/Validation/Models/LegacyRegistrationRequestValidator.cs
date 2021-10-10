@@ -27,13 +27,24 @@ namespace AuthN.Domain.Services.Validation.Models
             var minEmailLength = int.Parse(cSection["MinEmailLength"]);
             var minPasswordLength = int.Parse(cSection["MinPasswordLength"]);
 
-            RuleFor(x => x.Username).NotEmpty().Length(minUsernameLength, 50);
-            RuleFor(x => x.Email).EmailAddress().NotEmpty()
+            RuleFor(x => x.Username)
+                .NotEmpty()
+                .Length(minUsernameLength, 50);
+            RuleFor(x => x.Email)
+                .EmailAddress()
+                .NotEmpty()
                 .Length(minEmailLength, 512);
-            RuleFor(x => x.Password).NotEmpty().Length(minPasswordLength, 512);
-            RuleFor(x => x.Password).IsSufficientlyComplex();
-            RuleFor(x => x.Forename).NotEmpty().Length(2, 50);
-            RuleFor(x => x.Surname).NotEmpty().Length(2, 50);
+            RuleFor(x => x.Password)
+                .NotEmpty()
+                .Length(minPasswordLength, 512);
+            RuleFor(x => x.Password)
+                .IsSufficientlyComplex();
+            RuleFor(x => x.Forename)
+                .NotEmpty()
+                .Length(2, 50);
+            RuleFor(x => x.Surname)
+                .NotEmpty()
+                .Length(2, 50);
         }
     }
 }
