@@ -27,6 +27,7 @@ namespace AuthN.UnitTests.Domain.Validators
             act.Should().NotThrow<ValidatorException>();
         }
 
+        //TODO!!!
 
 
         private static UserValidator GetSutWithConfig(
@@ -47,7 +48,7 @@ namespace AuthN.UnitTests.Domain.Validators
             string email = "bob@test.co",
             string username = "bobsmith",
             string passwordSalt = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            string passwardHash = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            string passwordHash = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
             string forename = "Bob",
             string surname = "Smith",
             DateTime? createdOn = null)
@@ -57,7 +58,7 @@ namespace AuthN.UnitTests.Domain.Validators
                 Username = username,
                 RegisteredEmail = email,
                 PasswordSalt = passwordSalt,
-                PasswordHash = passwardHash,
+                PasswordHash = passwordHash,
                 Forename = forename,
                 Surname = surname,
                 CreatedOn = createdOn ?? DateTime.Today,

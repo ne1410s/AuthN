@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using AuthN.Domain.Exceptions;
 using AuthN.Domain.Models.Storage;
 using AuthN.Domain.Services.Validation.Models;
@@ -27,8 +28,61 @@ namespace AuthN.UnitTests.Domain.Validators
             act.Should().NotThrow<ValidatorException>();
         }
 
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData(" ")]
+        public void AssertValid_MissingName_ThrowsException(string roleName)
+        {
+            // Arrange
+            var sut = GetSutWithConfig();
+            var invalidSubject = GetSubjectValidByDefault(roleName: roleName);
 
+            // Act
+            Action act = () => sut.AssertValid(invalidSubject);
 
+            // Assert
+            var ex = act.Should().Throw<ValidatorException>().Which;
+            var messages = ex.InvalidItems.Select(item => item.ErrorMessage);
+            messages.Should().Contain("'Name' must not be empty.");
+        }
+
+        [Fact]
+        public void AssertValid_BadLengthName_ThrowsException()
+        {
+            // Arrange
+            var sut = GetSutWithConfig();
+            var invalidSubject = GetSubjectValidByDefault(roleName: "a");
+
+            // Act
+            Action act = () => sut.AssertValid(invalidSubject);
+
+            // Assert
+            var ex = act.Should().Throw<ValidatorException>().Which;
+            var messages = ex.InvalidItems.Select(item => item.ErrorMessage);
+            messages.Should().Contain(m => m.StartsWith(
+                "'Name' must be between 4 and 30"));
+        }
+
+        [Theory]
+        [InlineData("")]
+        [InlineData("Role")]
+        [InlineData("bad role")]
+        [InlineData("bad-Role")]
+        public void AssertValid_BadName_ThrowsException(string badName)
+        {
+            // Arrange
+            var sut = GetSutWithConfig();
+            var invalidSubject = GetSubjectValidByDefault(roleName: badName);
+
+            // Act
+            Action act = () => sut.AssertValid(invalidSubject);
+
+            // Assert
+            var ex = act.Should().Throw<ValidatorException>().Which;
+            var messages = ex.InvalidItems.Select(item => item.ErrorMessage);
+            messages.Should().Contain("'Name' is not in the correct format.");
+        }
 
         private static RoleValidator GetSutWithConfig()
         {
@@ -38,7 +92,7 @@ namespace AuthN.UnitTests.Domain.Validators
         }
 
         private static AuthNRole GetSubjectValidByDefault(
-            string roleName = "admin")
+            string roleName = "admin-role-test")
         {
             return new()
             {
