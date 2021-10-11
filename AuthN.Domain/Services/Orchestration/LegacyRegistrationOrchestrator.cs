@@ -63,8 +63,8 @@ namespace AuthN.Domain.Services.Orchestration
             if (emailCheck != null)
             {
                 var errorMessage = emailCheck.ActivatedOn == null
-                    ? "This email is awaiting activation"
-                    : "This email is taken";
+                    ? "This email is awaiting activation."
+                    : "This email is taken.";
                 throw new DataStateException(errorMessage);
             }
         }
@@ -75,8 +75,8 @@ namespace AuthN.Domain.Services.Orchestration
             if (usrCheck != null)
             {
                 var errorMessage = usrCheck.ActivatedOn == null
-                    ? "This username is awaiting activation"
-                    : "This username is taken";
+                    ? "This username is awaiting activation."
+                    : "This username is taken.";
                 throw new DataStateException(errorMessage);
             }
         }

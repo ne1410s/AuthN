@@ -70,8 +70,8 @@ namespace AuthN.UnitTests.Domain.Orchestrators.Orchestrators
                 .Returns(Task.FromResult<AuthNUser?>(user));
             var request = new LegacyRegistrationRequest();
             var expectedMessage = matchWasActivated
-                ? "This email is taken"
-                : "This email is awaiting activation";
+                ? "This email is taken."
+                : "This email is awaiting activation.";
 
             // Act
             Func<Task> act = () => sut.LegacyRegisterAsync(request);
@@ -100,8 +100,8 @@ namespace AuthN.UnitTests.Domain.Orchestrators.Orchestrators
                 .Returns(Task.FromResult<AuthNUser?>(user));
             var request = new LegacyRegistrationRequest();
             var expectedMessage = matchWasActivated
-                ? "This username is taken"
-                : "This username is awaiting activation";
+                ? "This username is taken."
+                : "This username is awaiting activation.";
 
             // Act
             Func<Task> act = () => sut.LegacyRegisterAsync(request);

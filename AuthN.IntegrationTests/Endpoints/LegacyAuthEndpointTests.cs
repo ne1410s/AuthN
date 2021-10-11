@@ -159,7 +159,7 @@ namespace AuthN.IntegrationTests.Endpoints
             res.SuccessData.Should().BeNull();
             res.ErrorData.Should().NotBeNull();
             res.ErrorData!.Type.Should().Be(nameof(DataStateException));
-            res.ErrorData!.Message.Should().Be("This username is taken");
+            res.ErrorData!.Message.Should().Be("This username is taken.");
         }
 
         [Fact]
