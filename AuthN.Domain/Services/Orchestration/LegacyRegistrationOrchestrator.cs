@@ -52,7 +52,7 @@ namespace AuthN.Domain.Services.Orchestration
             return new()
             {
                 ActivationCode = user.ActivationCode!.Value,
-                ExpiresOn = DateTime.Now + activationWindow,
+                ExpiresOn = DateTime.UtcNow + activationWindow,
             };
         }
 

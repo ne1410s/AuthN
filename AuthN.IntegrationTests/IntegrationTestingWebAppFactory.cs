@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace RefactorThis.IntegrationTests
+namespace AuthN.IntegrationTests
 {
     public class IntegrationTestingWebAppFactory
         : WebApplicationFactory<Startup>
