@@ -65,7 +65,8 @@ namespace AuthN.Domain.Services.Security
             var securityKey = new SymmetricSecurityKey(keyBytes);
             const string algorithm = SecurityAlgorithms.HmacSha256;
             var credentials = new SigningCredentials(securityKey, algorithm);
-            var roleNames = user.Roles.Select(r => r.Name);
+            var roleNames = user.Roles?.Select(r => r.Name)
+                ?? Array.Empty<string>();
 
             var claims = new List<Claim>()
             {

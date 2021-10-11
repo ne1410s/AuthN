@@ -41,21 +41,22 @@ namespace AuthN.Domain.Services.Orchestration
             validator.AssertValid(request);
             var user = await userRepo.FindByUsernameAsync(request.Username);
 
-            if (user?.ActivationCode == null
+            if (user?.ActivationCode != request.ActivationCode
+                || user?.ActivationCodeGeneratedOn == null
                 || request.Email != user.RegisteredEmail)
             {
-                throw new DataStateException("No matching users found");
+                throw new DataStateException("No matching users found.");
             }
 
             if (user.ActivatedOn != null)
             {
-                throw new OrchestrationException("User is already activated");
+                throw new OrchestrationException("User is already activated.");
             }
 
-            var earliestActivation = DateTime.UtcNow - activationWindow;
-            if (user.ActivatedOn < earliestActivation)
+            var earliestCodeGeneratedOn = DateTime.UtcNow - activationWindow;
+            if (user.ActivationCodeGeneratedOn < earliestCodeGeneratedOn)
             {
-                throw new OrchestrationException("Activation code has expired");
+                throw new OrchestrationException("Activation code expired.");
             }
 
             await userRepo.ActivateAsync(user.Username);
