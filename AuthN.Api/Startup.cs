@@ -1,6 +1,8 @@
 using System;
+using System.Linq;
 using System.Text.Json;
 using AuthN.Api.Middleware;
+using AuthN.Domain.Exceptions;
 using AuthN.Domain.Models.Request;
 using AuthN.Domain.Models.Storage;
 using AuthN.Domain.Services.Orchestration;
@@ -11,6 +13,7 @@ using AuthN.Persistence;
 using AuthN.Persistence.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -67,6 +70,29 @@ namespace AuthN.Api
                     Title = "AuthN.Api",
                     Version = "v1"
                 });
+            });
+
+            services.Configure<ApiBehaviorOptions>(opts =>
+            {
+                opts.InvalidModelStateResponseFactory = ctx =>
+                {
+                    var invalidFields = ctx.ModelState
+                        .Where(e => e.Value.Errors.Count != 0)
+                        .Select(e =>
+                        {
+                            var errors = e.Value.Errors
+                                .Select(m => m.ErrorMessage);
+                            var fieldMessage = string.Join(", ", errors);
+                            return new InvalidItem
+                            {
+                                ErrorMessage = fieldMessage,
+                                AttemptedValue = e.Value.RawValue,
+                                Property = e.Key,
+                            };
+                        });
+
+                    throw new ValidatorException(invalidFields.ToArray());
+                };
             });
 
             var connectionString = Configuration.GetConnectionString("AuthNDb");

@@ -2,6 +2,7 @@ using System;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using AuthN.Domain.Exceptions;
 using AuthN.Domain.Models.Request;
 using AuthN.Domain.Models.Storage;
 using AuthN.Domain.Services.Security;
@@ -84,10 +85,82 @@ namespace AuthN.IntegrationTests.Endpoints
             res.SuccessData!.ExpiresOn.Should().BeAfter(DateTime.UtcNow);
         }
 
-        // Moar registration!
+        [Fact]
+        public async Task LegacyWorkflow_ModelStateInvalidRequest_422()
+        {
+            // Arrange
+            var invalidRequest = new LegacyRegistrationRequest
+            {
+                Forename = "Scanty",
+                Surname = "O'Details",
+            };
 
+            // Act
+            var response = await client.SendJsonAsync(
+                "l-auth/register",
+                HttpMethod.Post,
+                invalidRequest);
 
+            // Assert
+            var res = await response.ReadJsonAsync<LegacyRegistrationSuccess>();
+            res.Status.Should().Be(HttpStatusCode.UnprocessableEntity);
+            res.SuccessData.Should().BeNull();
+            res.ErrorData.Should().NotBeNull();
+        }
 
+        [Fact]
+        public async Task LegacyWorkflow_ValidatorInvalidRequest_422()
+        {
+            // Arrange
+            var invalidRequest = new LegacyRegistrationRequest
+            {
+                Email = "bob/test.de",
+                Forename = "Bob",
+                Surname = "Schmidt",
+                Username = "bobschmidt",
+                Password = "Test123!",
+            };
+
+            // Act
+            var response = await client.SendJsonAsync(
+                "l-auth/register",
+                HttpMethod.Post,
+                invalidRequest);
+
+            // Assert
+            var res = await response.ReadJsonAsync<LegacyRegistrationSuccess>();
+            res.Status.Should().Be(HttpStatusCode.UnprocessableEntity);
+            res.SuccessData.Should().BeNull();
+            res.ErrorData.Should().NotBeNull();
+        }
+
+        [Fact]
+        public async Task LegacyWorkflow_DynamicInvalidRequest_400()
+        {
+            // Arrange
+            var invalidStateRequest = new LegacyRegistrationRequest
+            {
+                Email = "bob@test.co",
+                Forename = "Bob",
+                Surname = "Smith",
+                Username = ActivatedUser.Username,
+                Password = "Test123!",
+            };
+
+            // Act
+            var response = await client.SendJsonAsync(
+                "l-auth/register",
+                HttpMethod.Post,
+                invalidStateRequest);
+
+            // Assert
+            var res = await response.ReadJsonAsync<LegacyRegistrationSuccess>();
+            res.Status.Should().Be(HttpStatusCode.BadRequest);
+            res.SuccessData.Should().BeNull();
+            res.ErrorData.Should().NotBeNull();
+            res.ErrorData!.Type.Should().Be(nameof(DataStateException));
+            res.ErrorData!.Message.Should().Be("This username is taken");
+        }
 
         [Fact]
         public async Task LegacyWorkflow_ValidActivation_ReturnsSuccess()
@@ -111,10 +184,6 @@ namespace AuthN.IntegrationTests.Endpoints
             res.Status.Should().Be(HttpStatusCode.OK);
             res.ErrorData.Should().BeNull();
         }
-        // Moar activation!
-
-
-
 
         [Fact]
         public async Task LegacyWorkflow_ValidLogin_ReturnsSuccess()
@@ -140,10 +209,52 @@ namespace AuthN.IntegrationTests.Endpoints
             res.SuccessData!.User.Surname.Should().Be(ActivatedUser.Surname);
             res.ErrorData.Should().BeNull();
         }
-        // Moar login!
 
+        [Fact]
+        public async Task LegacyWorkflow_E2E()
+        {
+            // Register
+            var registerRequest = new LegacyRegistrationRequest
+            {
+                Email = "kate@test.co",
+                Forename = "Kate",
+                Surname = "Taylor",
+                Username = "katetaylor",
+                Password = "Test789!",
+            };
+            var registerResponse = await client.SendJsonAsync(
+                "l-auth/register",
+                HttpMethod.Post,
+                registerRequest);
+            var registerResult = await registerResponse
+                .ReadJsonAsync<LegacyRegistrationSuccess>();
 
+            // Activate
+            var activateRequest = new LegacyActivationRequest
+            {
+                ActivationCode = registerResult.SuccessData!.ActivationCode,
+                Email = registerRequest.Email,
+                Username = registerRequest.Username,
+            };
+            await client.SendJsonAsync(
+                "l-auth/activate",
+                HttpMethod.Patch,
+                activateRequest);
 
+            // Login
+            var loginRequest = new LegacyLoginRequest
+            {
+                Username = registerRequest.Username,
+                Password = registerRequest.Password,
+            };
+            var loginResponse = await client.SendJsonAsync(
+                "l-auth/login",
+                HttpMethod.Post,
+                loginRequest);
+            var loginResult = await loginResponse.ReadJsonAsync<LoginSuccess>();
 
+            // Assert
+            loginResult.SuccessData!.Token.Should().NotBeEmpty();
+        }
     }
 }

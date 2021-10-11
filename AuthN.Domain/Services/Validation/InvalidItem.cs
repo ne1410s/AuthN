@@ -18,6 +18,6 @@
         /// <summary>
         /// Gets the attempted (invalid) value.
         /// </summary>
-        public object AttemptedValue { get; init; } = default!;
+        public object? AttemptedValue { get; init; }
     }
 }
