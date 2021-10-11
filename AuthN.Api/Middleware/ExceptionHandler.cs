@@ -60,7 +60,12 @@ namespace AuthN.Api.Middleware
 
                 httpContext.Response.StatusCode = (int)responseCode;
                 httpContext.Response.ContentType = "application/json";
-                var responseJson = JsonSerializer.Serialize(response);
+                var jsonOpts = new JsonSerializerOptions
+                {
+                    IgnoreNullValues = true,
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                };
+                var responseJson = JsonSerializer.Serialize(response, jsonOpts);
                 await httpContext.Response.WriteAsync(responseJson);
             }
         }

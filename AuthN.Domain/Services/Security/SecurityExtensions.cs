@@ -68,6 +68,12 @@ namespace AuthN.Domain.Services.Security
             var roleNames = user.Roles?.Select(r => r.Name)
                 ?? Array.Empty<string>();
 
+            var opts = new JsonSerializerOptions
+            {
+                IgnoreNullValues = true,
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            };
+
             var claims = new List<Claim>()
             {
                 new Claim(JwtRegisteredClaimNames.Iss, issuer),
@@ -76,7 +82,7 @@ namespace AuthN.Domain.Services.Security
                 new Claim(JwtRegisteredClaimNames.Jti, $"{Guid.NewGuid()}"),
                 new Claim(JwtRegisteredClaimNames.GivenName, user.Forename),
                 new Claim(JwtRegisteredClaimNames.FamilyName, user.Surname),
-                new Claim("Roles", JsonSerializer.Serialize(roleNames)),
+                new Claim("Roles", JsonSerializer.Serialize(roleNames, opts)),
             };
 
             var token = new JwtSecurityToken(
@@ -96,6 +102,7 @@ namespace AuthN.Domain.Services.Security
         /// <param name="tokenIssuer">The token issuer.</param>
         /// <param name="tokenSecret">The token secret (signing key).</param>
         /// <returns>Login success object.</returns>
+        /// <exception cref="ArgumentException"/>
         public static LoginSuccess Tokenise(
             this AuthNUser user,
             uint tokenDuration,

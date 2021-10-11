@@ -1,8 +1,10 @@
 using System;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using AuthN.Domain.Models.Request;
 using AuthN.Domain.Models.Storage;
+using AuthN.Domain.Services.Security;
 using FluentAssertions;
 using Xunit;
 
@@ -10,27 +12,39 @@ namespace AuthN.IntegrationTests.Endpoints
 {
     public class LegacyAuthEndpointTests
     {
+        private const string ActivatedUserPass = "Test123!";
+        private const string ActivatedUserSalt = "random";
+
+        private const string ActivateeUserPass = "Test456!";
+        private const string ActivateeUserSalt = "other-thing";
+
+        private static readonly AuthNUser ActivateeUser = new()
+        {
+            ActivationCode = Guid.NewGuid(),
+            ActivationCodeGeneratedOn = DateTime.UtcNow.AddMinutes(-5),
+            CreatedOn = DateTime.UtcNow.AddMinutes(-5),
+            Forename = "alice",
+            Surname = "jones",
+            RegisteredEmail = "alice@test.co",
+            PasswordSalt = ActivateeUserSalt,
+            PasswordHash = ActivateeUserPass.Hash(ActivateeUserSalt),
+            Username = "alicejones",
+        };
+        private static readonly AuthNUser ActivatedUser = new()
+        {
+            ActivationCode = Guid.NewGuid(),
+            ActivationCodeGeneratedOn = DateTime.UtcNow.AddMinutes(-5),
+            ActivatedOn = DateTime.UtcNow.AddMinutes(-3),
+            CreatedOn = DateTime.UtcNow.AddMinutes(-5),
+            Forename = "fred",
+            Surname = "brown",
+            RegisteredEmail = "fred@test.co",
+            PasswordSalt = ActivatedUserSalt,
+            PasswordHash = ActivatedUserPass.Hash(ActivatedUserSalt),
+            Username = "fredbrown",
+        };
+
         private readonly HttpClient client;
-        private static readonly AuthNUser activatableUser = new()
-        {
-            ActivationCode = Guid.NewGuid(),
-            ActivationCodeGeneratedOn = DateTime.UtcNow.AddMinutes(-5),
-            CreatedOn = DateTime.UtcNow.AddMinutes(-5),
-            Forename = "alice",
-            Surname = "jones",
-            RegisteredEmail = "alice@test.co",
-            Username = "alicejones",
-        };
-        private static readonly AuthNUser activatedUser = new()
-        {
-            ActivationCode = Guid.NewGuid(),
-            ActivationCodeGeneratedOn = DateTime.UtcNow.AddMinutes(-5),
-            CreatedOn = DateTime.UtcNow.AddMinutes(-5),
-            Forename = "alice",
-            Surname = "jones",
-            RegisteredEmail = "alice@test.co",
-            Username = "alicejones",
-        };
 
         public LegacyAuthEndpointTests()
         {
@@ -38,16 +52,14 @@ namespace AuthN.IntegrationTests.Endpoints
             var appFactory = new IntegrationTestingWebAppFactory(db =>
             {
                 db.Users.AddRange(
-                    new AuthNUser
-                    {
-
-                    });
+                    ActivatedUser,
+                    ActivateeUser);
             });
             client = appFactory.CreateClient();
         }
 
         [Fact]
-        public async Task LegacyWorkflow_RegisterValid_ReturnsSuccess()
+        public async Task LegacyWorkflow_ValidRegistration_ReturnsSuccess()
         {
             // Arrange
             var request = new LegacyRegistrationRequest
@@ -78,26 +90,60 @@ namespace AuthN.IntegrationTests.Endpoints
 
 
         [Fact]
-        public async Task LegacyWorkflow_ActivationValid_ReturnsSuccess()
+        public async Task LegacyWorkflow_ValidActivation_ReturnsSuccess()
         {
             // Arrange
             var request = new LegacyActivationRequest
             {
-                ActivationCode = activationCode,
-                Email = ""
+                ActivationCode = ActivateeUser.ActivationCode!.Value,
+                Email = ActivateeUser.RegisteredEmail,
+                Username = ActivateeUser.Username,
             };
 
             // Act
             var response = await client.SendJsonAsync(
-                "l-auth/register",
+                "l-auth/activate",
+                HttpMethod.Patch,
+                request);
+
+            // Assert
+            var res = await response.ReadJsonAsync<object>();
+            res.Status.Should().Be(HttpStatusCode.OK);
+            res.ErrorData.Should().BeNull();
+        }
+        // Moar activation!
+
+
+
+
+        [Fact]
+        public async Task LegacyWorkflow_ValidLogin_ReturnsSuccess()
+        {
+            // Arrange
+            var request = new LegacyLoginRequest
+            {
+                Username = ActivatedUser.Username,
+                Password = ActivatedUserPass,
+            };
+
+            // Act
+            var response = await client.SendJsonAsync(
+                "l-auth/login",
                 HttpMethod.Post,
                 request);
 
             // Assert
-            var res = await response.ReadJsonAsync<LegacyRegistrationSuccess>();
+            var res = await response.ReadJsonAsync<LoginSuccess>();
             res.SuccessData.Should().NotBeNull();
-            res.SuccessData!.ActivationCode.Should().NotBeEmpty();
-            res.SuccessData!.ExpiresOn.Should().BeAfter(DateTime.UtcNow);
+            res.SuccessData!.Token.Should().NotBeNullOrWhiteSpace();
+            res.SuccessData!.TokenExpiresOn.Should().BeAfter(DateTime.Now);
+            res.SuccessData!.User.Surname.Should().Be(ActivatedUser.Surname);
+            res.ErrorData.Should().BeNull();
         }
+        // Moar login!
+
+
+
+
     }
 }

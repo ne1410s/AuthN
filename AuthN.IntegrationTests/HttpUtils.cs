@@ -33,7 +33,12 @@ namespace AuthN.IntegrationTests
             T requestObject,
             IEnumerable<KeyValuePair<string, string>>? headers = null)
         {
-            var requestJson = JsonSerializer.Serialize(requestObject);
+            var jsonOpts = new JsonSerializerOptions
+            {
+                IgnoreNullValues = true,
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            };
+            var requestJson = JsonSerializer.Serialize(requestObject, jsonOpts);
             var encoding = Encoding.UTF8;
             var requestMessage = new HttpRequestMessage
             {
@@ -64,17 +69,22 @@ namespace AuthN.IntegrationTests
         public static async Task<HttpResult<T>> ReadJsonAsync<T>(
             this HttpResponseMessage httpResponse)
         {
-            var responseJson = await httpResponse.Content.ReadAsStringAsync();
-            var jsonOpts = new JsonSerializerOptions
+            var json = await httpResponse.Content.ReadAsStringAsync();
+            var opts = new JsonSerializerOptions
             {
+                IgnoreNullValues = true,
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             };
 
             if (httpResponse.IsSuccessStatusCode)
             {
+                var deserialised = !string.IsNullOrWhiteSpace(json)
+                    ? JsonSerializer.Deserialize<T>(json, opts)
+                    : default;
+
                 return new(
                     httpResponse.StatusCode,
-                    JsonSerializer.Deserialize<T>(responseJson, jsonOpts),
+                    SuccessData: deserialised,
                     ErrorData: null);
             }
             else
@@ -82,9 +92,7 @@ namespace AuthN.IntegrationTests
                 return new(
                     httpResponse.StatusCode,
                     SuccessData: default,
-                    ErrorData: JsonSerializer.Deserialize<HttpErrorResponse>(
-                        responseJson,
-                        jsonOpts));
+                    JsonSerializer.Deserialize<HttpErrorResponse>(json, opts));
             }
         }
     }

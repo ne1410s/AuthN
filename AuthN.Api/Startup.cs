@@ -1,4 +1,6 @@
 using System;
+using System.Text.Json;
+using AuthN.Api.Middleware;
 using AuthN.Domain.Models.Request;
 using AuthN.Domain.Models.Storage;
 using AuthN.Domain.Services.Orchestration;
@@ -52,7 +54,11 @@ namespace AuthN.Api
         {
             services.AddControllers()
                 .AddJsonOptions(options =>
-                    options.JsonSerializerOptions.IgnoreNullValues = true);
+                {
+                    options.JsonSerializerOptions.IgnoreNullValues = true;
+                    options.JsonSerializerOptions.PropertyNamingPolicy =
+                        JsonNamingPolicy.CamelCase;
+                });
 
             services.AddSwaggerGen(c =>
             {
@@ -101,6 +107,7 @@ namespace AuthN.Api
             app.UseHttpsRedirection();
             app.UseRouting();
             app.UseAuthorization();
+            app.UseMiddleware<ExceptionHandler>();
             app.UseEndpoints(endpoints => endpoints.MapControllers());
         }
 

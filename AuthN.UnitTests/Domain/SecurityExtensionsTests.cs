@@ -121,7 +121,12 @@ namespace AuthN.UnitTests.Domain
             GetClaim(parsedJwt, JwtRegisteredClaimNames.Jti)
                 .Should().NotBeNullOrWhiteSpace();
             var rolesJson = GetClaim(parsedJwt, "Roles")!;
-            var roles = JsonSerializer.Deserialize<string[]>(rolesJson);
+            var opts = new JsonSerializerOptions
+            {
+                IgnoreNullValues = true,
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            };
+            var roles = JsonSerializer.Deserialize<string[]>(rolesJson, opts);
             roles.Should().Contain(user.Roles[0].Name);
             roles.Should().Contain(user.Roles[1].Name);
         }
