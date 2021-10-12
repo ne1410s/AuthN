@@ -24,14 +24,12 @@ namespace AuthN.IntegrationTests
         /// <param name="client">The http client.</param>
         /// <param name="httpMethod">The http method.</param>
         /// <param name="requestObject">The request body object.</param>
-        /// <param name="headers">Any request headers.</param>
         /// <returns>A http response message.</returns>
         public static async Task<HttpResponseMessage> SendJsonAsync<T>(
             this HttpClient client,
             string url,
             HttpMethod httpMethod,
-            T requestObject,
-            IEnumerable<KeyValuePair<string, string>>? headers = null)
+            T requestObject)
         {
             var jsonOpts = new JsonSerializerOptions
             {
@@ -46,14 +44,6 @@ namespace AuthN.IntegrationTests
                 Method = httpMethod,
                 RequestUri = new Uri(url, UriKind.RelativeOrAbsolute),
             };
-
-            if (headers != null)
-            {
-                foreach (var kvp in headers)
-                {
-                    requestMessage.Headers.Add(kvp.Key, kvp.Value);
-                }
-            }
 
             return await client.SendAsync(requestMessage);
         }
