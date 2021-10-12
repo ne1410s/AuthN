@@ -18,9 +18,15 @@ jobs:
       with:
         dotnet-version: 5.0.x
     - name: CI
+      env:
+        COVERALLS_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
       run: |
+        echo "github commit id..."
+        echo $GITHUB_SHA
+        echo "coveralls token..."
+        echo $COVERALLS_TOKEN
         dotnet restore
         dotnet test --settings coverlet.runsettings
         dotnet tool restore
         dotnet reportgenerator -targetdir:coveragereport -reports:**/coverage.info -reporttypes:"lcov"
-        dotnet csmacnz.Coveralls --lcov -i coveragereport/lcov.info --repoToken ${COVERALLS_TOKEN} --commitId ${GITHUB_SHA} --commitBranch master
+        dotnet csmacnz.Coveralls --lcov -i coveragereport/lcov.info --repoToken $COVERALLS_TOKEN --commitId $GITHUB_SHA --commitBranch master
