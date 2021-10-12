@@ -1,3 +1,5 @@
+[![Coverage Status](https://coveralls.io/repos/github/ne1410s/AuthN/badge.svg?branch=master)](https://coveralls.io/github/ne1410s/AuthN?branch=master)
+
 ```powershell
 # run this to pick up the accompanying tools
 dotnet tool restore
