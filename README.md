@@ -1,3 +1,4 @@
+![dotnet build](https://github.com/ne1410s/AuthN/actions/workflows/dotnet.yml/badge.svg)
 [![Coverage Status](https://coveralls.io/repos/github/ne1410s/AuthN/badge.svg?branch=master)](https://coveralls.io/github/ne1410s/AuthN?branch=master)
 
 ```powershell
