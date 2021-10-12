@@ -9,6 +9,8 @@ namespace AuthN.UnitTests.Persistence.Repositories
     /// </summary>
     public static class DbUtils
     {
+        private const string DbFileName = "unit-test.db";
+
         /// <summary>
         /// Provides a legit sqlite database file with an up-to-date schema.
         /// </summary>
@@ -18,7 +20,7 @@ namespace AuthN.UnitTests.Persistence.Repositories
             Action<AuthNDbContext>? seedAction = null)
         {
             var dbOptsBuilder = new DbContextOptionsBuilder<AuthNDbContext>();
-            dbOptsBuilder.UseSqlite("Data Source=unit-test.db");
+            dbOptsBuilder.UseSqlite($"Data Source={DbFileName}");
 
             var db = new AuthNDbContext(dbOptsBuilder.Options);
             db.Database.OpenConnection();

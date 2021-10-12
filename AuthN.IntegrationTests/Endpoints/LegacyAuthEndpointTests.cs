@@ -99,7 +99,7 @@ namespace AuthN.IntegrationTests.Endpoints
             // Act
             var response = await client.SendJsonAsync(
                 "l-auth/activate",
-                HttpMethod.Patch,
+                HttpMethod.Put,
                 request);
 
             // Assert
@@ -161,7 +161,7 @@ namespace AuthN.IntegrationTests.Endpoints
             };
             await client.SendJsonAsync(
                 "l-auth/activate",
-                HttpMethod.Patch,
+                HttpMethod.Put,
                 activateRequest);
 
             // Login

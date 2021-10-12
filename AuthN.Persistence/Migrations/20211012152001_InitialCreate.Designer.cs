@@ -13,6 +13,9 @@ namespace AuthN.Persistence.Migrations
     [Migration("20211012152001_InitialCreate")]
     partial class InitialCreate
     {
+        /// <summary>
+        /// Builds the target model.
+        /// </summary>
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using AuthN.Api;
 using AuthN.Persistence;
@@ -12,6 +13,8 @@ namespace AuthN.IntegrationTests
     public class IntegrationTestingWebAppFactory
         : WebApplicationFactory<Startup>
     {
+        private const string DbFileName = "integration-test.db";
+
         private readonly Action<AuthNDbContext>? seedAction;
         private readonly Action<IServiceCollection>? servicesAction;
 
@@ -25,6 +28,9 @@ namespace AuthN.IntegrationTests
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
+            builder.UseSetting("https_port", "5001");
+
+            File.Delete(DbFileName);
             builder.ConfigureServices(services =>
             {
                 var descriptor = services.Single(d =>
@@ -32,7 +38,7 @@ namespace AuthN.IntegrationTests
 
                 services.Remove(descriptor);
                 services.AddDbContext<AuthNDbContext>(options =>
-                    options.UseSqlite("Data Source=integration-test.db"));
+                    options.UseSqlite($"Data Source={DbFileName}"));
 
                 servicesAction?.Invoke(services);
 

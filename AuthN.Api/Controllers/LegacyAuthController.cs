@@ -53,7 +53,7 @@ namespace AuthN.Api.Controllers
         /// </summary>
         /// <param name="request">The request.</param>
         /// <exception cref="OrchestrationException"/>
-        [HttpPatch]
+        [HttpPut]
         [Route("activate")]
         public async Task ActivateAsync(LegacyActivationRequest request)
         {

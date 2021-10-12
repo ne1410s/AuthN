@@ -23,10 +23,6 @@ jobs:
       env:
         COVERALLS_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
       run: |
-        echo "github commit id..."
-        echo $GITHUB_SHA
-        echo "coveralls token..."
-        echo $COVERALLS_TOKEN
         dotnet restore
         dotnet test --settings coverlet.runsettings
         dotnet tool restore
