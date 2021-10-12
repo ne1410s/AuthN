@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using AuthN.Api.WebModels;
 
@@ -35,6 +36,7 @@ namespace AuthN.IntegrationTests
                 IgnoreNullValues = true,
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             };
+            jsonOpts.Converters.Add(new JsonStringEnumConverter());
             var requestJson = JsonSerializer.Serialize(requestObject, jsonOpts);
             var encoding = Encoding.UTF8;
             var requestMessage = new HttpRequestMessage
@@ -64,6 +66,7 @@ namespace AuthN.IntegrationTests
                 IgnoreNullValues = true,
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             };
+            opts.Converters.Add(new JsonStringEnumConverter());
 
             if (httpResponse.IsSuccessStatusCode)
             {

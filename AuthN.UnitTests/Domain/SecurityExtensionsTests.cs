@@ -2,6 +2,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using AuthN.Domain.Models.Storage;
 using AuthN.Domain.Services.Security;
 using FluentAssertions;
@@ -101,7 +102,9 @@ namespace AuthN.UnitTests.Domain
         public void CreateJwt_WithFullClaims_ParsesOk()
         {
             // Arrange
-            var user = GetValidUser("role1", "role2");
+            var user = GetValidUser(
+                PrivilegeType.DeleteUser,
+                PrivilegeType.AssignPrivileges);
             const string issuer = "issuer";
 
             // Act
@@ -120,15 +123,17 @@ namespace AuthN.UnitTests.Domain
                 .Should().Be(user.Surname);
             GetClaim(parsedJwt, JwtRegisteredClaimNames.Jti)
                 .Should().NotBeNullOrWhiteSpace();
-            var rolesJson = GetClaim(parsedJwt, "Roles")!;
+            var privilegeJson = GetClaim(parsedJwt, "Privileges")!;
             var opts = new JsonSerializerOptions
             {
                 IgnoreNullValues = true,
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             };
-            var roles = JsonSerializer.Deserialize<string[]>(rolesJson, opts);
-            roles.Should().Contain(user.Roles[0].Name);
-            roles.Should().Contain(user.Roles[1].Name);
+            opts.Converters.Add(new JsonStringEnumConverter());
+            var privileges = JsonSerializer.Deserialize<PrivilegeType[]>(
+                privilegeJson, opts);
+            privileges.Should().Contain(user.Privileges[0].Type);
+            privileges.Should().Contain(user.Privileges[1].Type);
         }
 
         [Fact]
@@ -146,14 +151,17 @@ namespace AuthN.UnitTests.Domain
             result.TokenExpiresOn.Should().BeAfter(DateTime.Now);
         }
 
-        private static AuthNUser GetValidUser(params string[] roles) => new()
-        {
-            Username = "bobsmith",
-            RegisteredEmail = "bob@test.co",
-            Forename = "bob",
-            Surname = "smith",
-            Roles = roles.Select(r => new AuthNRole { Name = r }).ToList()
-        };
+        private static AuthNUser GetValidUser(params PrivilegeType[] privileges)
+            => new()
+            {
+                Username = "bobsmith",
+                RegisteredEmail = "bob@test.co",
+                Forename = "bob",
+                Surname = "smith",
+                Privileges = privileges
+                    .Select(r => new AuthNPrivilege { Type = r })
+                    .ToList(),
+            };
 
         private static string GetClaim(JwtSecurityToken jwt, string name)
             => jwt.Claims.Single(c => c.Type == name).Value;

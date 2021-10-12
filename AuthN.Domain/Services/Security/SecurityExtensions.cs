@@ -6,6 +6,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using AuthN.Domain.Models.Request;
 using AuthN.Domain.Models.Storage;
 using Microsoft.IdentityModel.Tokens;
@@ -65,14 +66,15 @@ namespace AuthN.Domain.Services.Security
             var securityKey = new SymmetricSecurityKey(keyBytes);
             const string algorithm = SecurityAlgorithms.HmacSha256;
             var credentials = new SigningCredentials(securityKey, algorithm);
-            var roleNames = user.Roles?.Select(r => r.Name)
-                ?? Array.Empty<string>();
+            var privs = user.Privileges?.Select(r => r.Type)
+                ?? Array.Empty<PrivilegeType>();
 
             var opts = new JsonSerializerOptions
             {
                 IgnoreNullValues = true,
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             };
+            opts.Converters.Add(new JsonStringEnumConverter());
 
             var claims = new List<Claim>()
             {
@@ -82,7 +84,7 @@ namespace AuthN.Domain.Services.Security
                 new Claim(JwtRegisteredClaimNames.Jti, $"{Guid.NewGuid()}"),
                 new Claim(JwtRegisteredClaimNames.GivenName, user.Forename),
                 new Claim(JwtRegisteredClaimNames.FamilyName, user.Surname),
-                new Claim("Roles", JsonSerializer.Serialize(roleNames, opts)),
+                new Claim("Privileges", JsonSerializer.Serialize(privs, opts)),
             };
 
             var token = new JwtSecurityToken(

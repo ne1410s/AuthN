@@ -49,7 +49,7 @@ namespace AuthN.IntegrationTests
                 db.Database.EnsureCreated();
 
                 db.Users.RemoveRange(db.Users);
-                db.Roles.RemoveRange(db.Roles);
+                db.Privileges.RemoveRange(db.Privileges);
                 db.SaveChanges();
 
                 seedAction?.Invoke(db);

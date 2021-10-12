@@ -10,13 +10,9 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AuthN.Persistence.Migrations
 {
     [DbContext(typeof(AuthNDbContext))]
-    [Migration("20211007203758_InitialCreate")]
+    [Migration("20211012152001_InitialCreate")]
     partial class InitialCreate
     {
-        /// <summary>
-        /// Builds the target model.
-        /// </summary>
-        /// <param name="modelBuilder"></param>
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
@@ -25,23 +21,23 @@ namespace AuthN.Persistence.Migrations
                 .HasAnnotation("ProductVersion", "5.0.10")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("AuthN.Domain.Models.Storage.AuthNRole", b =>
+            modelBuilder.Entity("AuthN.Domain.Models.Storage.AuthNPrivilege", b =>
                 {
-                    b.Property<int>("RoleId")
+                    b.Property<int>("PrivilegeId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Name")
+                    b.Property<string>("Type")
                         .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
-                    b.HasKey("RoleId");
+                    b.HasKey("PrivilegeId");
 
-                    b.HasAlternateKey("Name");
+                    b.HasAlternateKey("Type");
 
-                    b.ToTable("Roles");
+                    b.ToTable("Privileges");
                 });
 
             modelBuilder.Entity("AuthN.Domain.Models.Storage.AuthNUser", b =>
@@ -104,26 +100,26 @@ namespace AuthN.Persistence.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("AuthNRoleAuthNUser", b =>
+            modelBuilder.Entity("AuthNPrivilegeAuthNUser", b =>
                 {
-                    b.Property<int>("RolesRoleId")
+                    b.Property<int>("PrivilegesPrivilegeId")
                         .HasColumnType("int");
 
                     b.Property<int>("UsersUserId")
                         .HasColumnType("int");
 
-                    b.HasKey("RolesRoleId", "UsersUserId");
+                    b.HasKey("PrivilegesPrivilegeId", "UsersUserId");
 
                     b.HasIndex("UsersUserId");
 
-                    b.ToTable("AuthNRoleAuthNUser");
+                    b.ToTable("AuthNPrivilegeAuthNUser");
                 });
 
-            modelBuilder.Entity("AuthNRoleAuthNUser", b =>
+            modelBuilder.Entity("AuthNPrivilegeAuthNUser", b =>
                 {
-                    b.HasOne("AuthN.Domain.Models.Storage.AuthNRole", null)
+                    b.HasOne("AuthN.Domain.Models.Storage.AuthNPrivilege", null)
                         .WithMany()
-                        .HasForeignKey("RolesRoleId")
+                        .HasForeignKey("PrivilegesPrivilegeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

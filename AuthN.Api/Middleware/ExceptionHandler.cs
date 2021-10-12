@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Net;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using AuthN.Api.WebModels;
 using AuthN.Domain.Exceptions;
@@ -65,6 +66,7 @@ namespace AuthN.Api.Middleware
                     IgnoreNullValues = true,
                     PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                 };
+                jsonOpts.Converters.Add(new JsonStringEnumConverter());
                 var responseJson = JsonSerializer.Serialize(response, jsonOpts);
                 await httpContext.Response.WriteAsync(responseJson);
             }

@@ -7,17 +7,17 @@ using Xunit;
 namespace AuthN.UnitTests.Persistence.Repositories
 {
     /// <summary>
-    /// Tests for the <see cref="EfRoleRepository"/>.
+    /// Tests for the <see cref="EfPrivilegeRepository"/>.
     /// </summary>
     [Collection("Sequential")]
-    public class EfRoleRepositoryTests
+    public class EfPrivilegeRepositoryTests
     {
         [Fact]
         public async Task ListAllAsync_NonePresent_ReturnsEmptyList()
         {
             // Arrange
             var db = DbUtils.SeedSqlite();
-            var sut = new EfRoleRepository(db);
+            var sut = new EfPrivilegeRepository(db);
 
             // Act
             var result = await sut.ListAllAsync();
@@ -30,39 +30,42 @@ namespace AuthN.UnitTests.Persistence.Repositories
         public async Task ListAllAsync_SomePresent_ReturnsItems()
         {
             // Arrange
-            var existingRoles = new[]
+            var existingPrivileges = new[]
             {
-                new AuthNRole { Name = "role1" },
-                new AuthNRole { Name = "role2" },
+                new AuthNPrivilege { Type = PrivilegeType.DeleteUser },
             };
-            var db = DbUtils.SeedSqlite(s => s.Roles.AddRange(existingRoles));
-            var sut = new EfRoleRepository(db);
+            var db = DbUtils.SeedSqlite(s =>
+                s.Privileges.AddRange(existingPrivileges));
+            var sut = new EfPrivilegeRepository(db);
 
             // Act
             var result = await sut.ListAllAsync();
 
             // Assert
-            result.Count.Should().Be(existingRoles.Length);
+            result.Count.Should().Be(existingPrivileges.Length);
         }
 
         [Fact]
         public async Task ListAllAsync_ManyPresent_SortsAlphabetically()
         {
             // Arrange
-            var roleB = new AuthNRole { Name = "bbb" };
-            var roleA = new AuthNRole { Name = "aaa" };
-            var roleC = new AuthNRole { Name = "ccc" };
+            var privA = new AuthNPrivilege { Type = PrivilegeType.Default };
+            var privB = new AuthNPrivilege
+            {
+                Type = PrivilegeType.AssignPrivileges
+            };
+            var privC = new AuthNPrivilege { Type = PrivilegeType.DeleteUser };
             var db = DbUtils.SeedSqlite(s =>
-                s.Roles.AddRange(roleB, roleA, roleC));
-            var sut = new EfRoleRepository(db);
+                s.Privileges.AddRange(privA, privB, privC));
+            var sut = new EfPrivilegeRepository(db);
 
             // Act
             var result = await sut.ListAllAsync();
 
             // Assert
-            result[0].Name.Should().Be(roleA.Name);
-            result[1].Name.Should().Be(roleB.Name);
-            result[2].Name.Should().Be(roleC.Name);
+            result[0].Type.Should().Be(privB.Type);
+            result[1].Type.Should().Be(privA.Type);
+            result[2].Type.Should().Be(privC.Type);
         }
     }
 }

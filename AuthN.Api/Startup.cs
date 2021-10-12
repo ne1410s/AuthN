@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using AuthN.Api.Middleware;
 using AuthN.Domain.Exceptions;
 using AuthN.Domain.Models.Request;
@@ -61,6 +62,8 @@ namespace AuthN.Api
                     options.JsonSerializerOptions.IgnoreNullValues = true;
                     options.JsonSerializerOptions.PropertyNamingPolicy =
                         JsonNamingPolicy.CamelCase;
+                    options.JsonSerializerOptions.Converters.Add(
+                        new JsonStringEnumConverter());
                 });
 
             services.AddSwaggerGen(c =>
@@ -150,7 +153,9 @@ namespace AuthN.Api
         private static void InjectValidators(IServiceCollection services)
         {
             services.AddTransient<IItemValidator<AuthNUser>, UserValidator>();
-            services.AddTransient<IItemValidator<AuthNRole>, RoleValidator>();
+            services.AddTransient<
+                IItemValidator<AuthNPrivilege>,
+                PrivilegeValidator>();
 
             services.AddTransient<
                 IItemValidator<LegacyRegistrationRequest>,
@@ -166,7 +171,9 @@ namespace AuthN.Api
         private static void InjectRepositories(IServiceCollection services)
         {
             services.AddTransient<IUserRepository, EfUserRepository>();
-            services.AddTransient<IRoleRepository, EfRoleRepository>();
+            services.AddTransient<
+                IPrivilegeRepository,
+                EfPrivilegeRepository>();
         }
     }
 }

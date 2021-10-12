@@ -62,8 +62,8 @@ namespace AuthN.Domain.Models.Storage
         public DateTime? ActivatedOn { get; set; }
 
         /// <summary>
-        /// Gets the roles to which the user belongs.
+        /// Gets the privileges assigned directly to the user.
         /// </summary>
-        public IReadOnlyList<AuthNRole> Roles { get; init; } = default!;
+        public IReadOnlyList<AuthNPrivilege> Privileges { get; init; } = null!;
     }
 }

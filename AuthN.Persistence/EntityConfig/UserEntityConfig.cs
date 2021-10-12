@@ -29,7 +29,7 @@ namespace AuthN.Persistence.EntityConfig
             builder.Property(r => r.Surname).IsRequired().HasMaxLength(50);
 
             // Many-to-many: an implicit "pure" join table is created
-            builder.HasMany(r => r.Roles).WithMany(role => role.Users);
+            builder.HasMany(r => r.Privileges).WithMany(p => p.Users);
         }
     }
 }

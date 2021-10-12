@@ -19,14 +19,14 @@ namespace AuthN.Persistence
         { }
 
         /// <summary>
-        /// Gets or sets the customers table.
+        /// Gets or sets the users table.
         /// </summary>
         public DbSet<AuthNUser> Users { get; init; } = default!;
 
         /// <summary>
-        /// Gets or sets the policies table.
+        /// Gets or sets the privileges table.
         /// </summary>
-        public DbSet<AuthNRole> Roles { get; init; } = default!;
+        public DbSet<AuthNPrivilege> Privileges { get; init; } = default!;
 
         /// <inheritdoc/>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -34,7 +34,7 @@ namespace AuthN.Persistence
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.ApplyConfiguration(new UserEntityConfig());
-            modelBuilder.ApplyConfiguration(new RoleEntityConfig());
+            modelBuilder.ApplyConfiguration(new PrivilegeEntityConfig());
         }
     }
 }

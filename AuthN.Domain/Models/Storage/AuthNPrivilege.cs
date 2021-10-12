@@ -3,17 +3,17 @@
 namespace AuthN.Domain.Models.Storage
 {
     /// <summary>
-    /// A role.
+    /// A privilege.
     /// </summary>
-    public record AuthNRole
+    public record AuthNPrivilege
     {
         /// <summary>
-        /// Gets the role name.
+        /// Gets the privilege type.
         /// </summary>
-        public string Name { get; init; } = default!;
+        public PrivilegeType Type { get; init; } = default!;
 
         /// <summary>
-        /// Gets the users of this role.
+        /// Gets the users with this privilege.
         /// </summary>
         public IReadOnlyList<AuthNUser> Users { get; init; } = default!;
     }

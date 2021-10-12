@@ -12,17 +12,17 @@ namespace AuthN.Persistence.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Roles",
+                name: "Privileges",
                 columns: table => new
                 {
-                    RoleId = table.Column<int>(type: "int", nullable: false)
+                    PrivilegeId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false)
+                    Type = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Roles", x => x.RoleId);
-                    table.UniqueConstraint("AK_Roles_Name", x => x.Name);
+                    table.PrimaryKey("PK_Privileges", x => x.PrivilegeId);
+                    table.UniqueConstraint("AK_Privileges_Type", x => x.Type);
                 });
 
             migrationBuilder.CreateTable(
@@ -48,23 +48,23 @@ namespace AuthN.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "AuthNRoleAuthNUser",
+                name: "AuthNPrivilegeAuthNUser",
                 columns: table => new
                 {
-                    RolesRoleId = table.Column<int>(type: "int", nullable: false),
+                    PrivilegesPrivilegeId = table.Column<int>(type: "int", nullable: false),
                     UsersUserId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AuthNRoleAuthNUser", x => new { x.RolesRoleId, x.UsersUserId });
+                    table.PrimaryKey("PK_AuthNPrivilegeAuthNUser", x => new { x.PrivilegesPrivilegeId, x.UsersUserId });
                     table.ForeignKey(
-                        name: "FK_AuthNRoleAuthNUser_Roles_RolesRoleId",
-                        column: x => x.RolesRoleId,
-                        principalTable: "Roles",
-                        principalColumn: "RoleId",
+                        name: "FK_AuthNPrivilegeAuthNUser_Privileges_PrivilegesPrivilegeId",
+                        column: x => x.PrivilegesPrivilegeId,
+                        principalTable: "Privileges",
+                        principalColumn: "PrivilegeId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_AuthNRoleAuthNUser_Users_UsersUserId",
+                        name: "FK_AuthNPrivilegeAuthNUser_Users_UsersUserId",
                         column: x => x.UsersUserId,
                         principalTable: "Users",
                         principalColumn: "UserId",
@@ -72,8 +72,8 @@ namespace AuthN.Persistence.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_AuthNRoleAuthNUser_UsersUserId",
-                table: "AuthNRoleAuthNUser",
+                name: "IX_AuthNPrivilegeAuthNUser_UsersUserId",
+                table: "AuthNPrivilegeAuthNUser",
                 column: "UsersUserId");
 
             migrationBuilder.CreateIndex(
@@ -93,10 +93,10 @@ namespace AuthN.Persistence.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "AuthNRoleAuthNUser");
+                name: "AuthNPrivilegeAuthNUser");
 
             migrationBuilder.DropTable(
-                name: "Roles");
+                name: "Privileges");
 
             migrationBuilder.DropTable(
                 name: "Users");
