@@ -1,5 +1,6 @@
 ![dotnet build](https://github.com/ne1410s/AuthN/actions/workflows/dotnet.yml/badge.svg)
 [![Coverage Status](https://coveralls.io/repos/github/ne1410s/AuthN/badge.svg?branch=master)](https://coveralls.io/github/ne1410s/AuthN?branch=master)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/89c4bbbbcf4b405a93d2e44bb0c40f10)](https://www.codacy.com/gh/ne1410s/AuthN/dashboard)
 
 ```powershell
 # run this to pick up the accompanying tools
