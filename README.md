@@ -11,7 +11,7 @@ dotnet test --settings coverlet.runsettings
 
 # obtain fresh report(s) from coverlet coverage results
 gci coveragerep* | ri -r
-dotnet reportgenerator -targetdir:coveragereport -reports:**/coverage.cobertura.xml -reporttypes:"html" 
+dotnet reportgenerator -targetdir:coveragereport -reports:**/coverage.info -reporttypes:"html;lcov" 
 ```
 
 ## Entity Framework
