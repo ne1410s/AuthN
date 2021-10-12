@@ -13,7 +13,7 @@ namespace AuthN.Persistence.EntityConfig
         /// <inheritdoc/>
         public void Configure(EntityTypeBuilder<AuthNPrivilege> builder)
         {
-            builder.Property<int>("PrivilegeId").ValueGeneratedOnAdd();
+            builder.Property<int>("PrivilegeId").ValueGeneratedNever();
             builder.HasKey("PrivilegeId");
 
             builder.HasAlternateKey(r => r.Type);

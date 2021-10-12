@@ -21,6 +21,7 @@ namespace AuthN.Domain.Services.Validation.Models
         protected override void DefineModelValidity(IConfiguration config)
         {
             RuleFor(x => x.Type).IsInEnum();
+            RuleFor(x => x.Type).Must(t => t.ToString().Length <= 100);
         }
     }
 }

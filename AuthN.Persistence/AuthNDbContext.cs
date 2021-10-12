@@ -1,4 +1,6 @@
-﻿using AuthN.Domain.Models.Storage;
+﻿using System;
+using System.Linq;
+using AuthN.Domain.Models.Storage;
 using AuthN.Persistence.EntityConfig;
 using Microsoft.EntityFrameworkCore;
 
@@ -35,6 +37,10 @@ namespace AuthN.Persistence
 
             modelBuilder.ApplyConfiguration(new UserEntityConfig());
             modelBuilder.ApplyConfiguration(new PrivilegeEntityConfig());
+
+            var allPrivileges = Enum.GetValues<PrivilegeType>()
+                .Select(p => new { PrivilegeId = (int)p, Type = p });
+            modelBuilder.Entity<AuthNPrivilege>().HasData(allPrivileges);
         }
     }
 }

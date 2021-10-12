@@ -171,9 +171,6 @@ namespace AuthN.Api
         private static void InjectRepositories(IServiceCollection services)
         {
             services.AddTransient<IUserRepository, EfUserRepository>();
-            services.AddTransient<
-                IPrivilegeRepository,
-                EfPrivilegeRepository>();
         }
     }
 }

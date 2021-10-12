@@ -22,9 +22,7 @@ namespace AuthN.Persistence.Migrations
             modelBuilder.Entity("AuthN.Domain.Models.Storage.AuthNPrivilege", b =>
                 {
                     b.Property<int>("PrivilegeId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
 
                     b.Property<string>("Type")
                         .IsRequired()
@@ -36,6 +34,23 @@ namespace AuthN.Persistence.Migrations
                     b.HasAlternateKey("Type");
 
                     b.ToTable("Privileges");
+
+                    b.HasData(
+                        new
+                        {
+                            PrivilegeId = 0,
+                            Type = "Default"
+                        },
+                        new
+                        {
+                            PrivilegeId = 1,
+                            Type = "AssignPrivileges"
+                        },
+                        new
+                        {
+                            PrivilegeId = 2,
+                            Type = "DeleteUser"
+                        });
                 });
 
             modelBuilder.Entity("AuthN.Domain.Models.Storage.AuthNUser", b =>

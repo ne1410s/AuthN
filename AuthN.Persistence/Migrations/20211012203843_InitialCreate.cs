@@ -15,8 +15,7 @@ namespace AuthN.Persistence.Migrations
                 name: "Privileges",
                 columns: table => new
                 {
-                    PrivilegeId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PrivilegeId = table.Column<int>(type: "int", nullable: false),
                     Type = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
                 },
                 constraints: table =>
@@ -70,6 +69,21 @@ namespace AuthN.Persistence.Migrations
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.InsertData(
+                table: "Privileges",
+                columns: new[] { "PrivilegeId", "Type" },
+                values: new object[] { 0, "Default" });
+
+            migrationBuilder.InsertData(
+                table: "Privileges",
+                columns: new[] { "PrivilegeId", "Type" },
+                values: new object[] { 1, "AssignPrivileges" });
+
+            migrationBuilder.InsertData(
+                table: "Privileges",
+                columns: new[] { "PrivilegeId", "Type" },
+                values: new object[] { 2, "DeleteUser" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AuthNPrivilegeAuthNUser_UsersUserId",

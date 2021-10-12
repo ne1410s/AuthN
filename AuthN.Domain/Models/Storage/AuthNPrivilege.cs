@@ -10,7 +10,7 @@ namespace AuthN.Domain.Models.Storage
         /// <summary>
         /// Gets the privilege type.
         /// </summary>
-        public PrivilegeType Type { get; init; } = default!;
+        public PrivilegeType Type { get; init; }
 
         /// <summary>
         /// Gets the users with this privilege.
