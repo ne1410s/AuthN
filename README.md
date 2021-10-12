@@ -10,12 +10,10 @@ dotnet tool restore
 ## Test Coverage
 ```powershell
 # obtain fresh coverlet test coverage results
-gci **/TestResults/ | ri -r
-dotnet test --settings coverlet.runsettings
+gci **/TestResults/ | ri -r; dotnet test --settings coverlet.runsettings
 
 # obtain fresh report(s) from coverlet coverage results
-gci coveragerep* | ri -r
-dotnet reportgenerator -targetdir:coveragereport -reports:**/coverage.info -reporttypes:"html;lcov" 
+gci coveragerep* | ri -r; dotnet reportgenerator -targetdir:coveragereport -reports:**/coverage.cobertura.xml -reporttypes:"html" 
 ```
 
 ## Entity Framework
