@@ -123,11 +123,8 @@ namespace AuthN.Api
                     "/swagger/v1/swagger.json",
                     "AuthN.Api v1");
 
-                if (env.IsProduction())
-                {
-                    // Disable all calls via UI
-                    c.SupportedSubmitMethods(Array.Empty<SubmitMethod>());
-                }
+                // Disable all calls via UI
+                c.SupportedSubmitMethods(Array.Empty<SubmitMethod>());
             });
 
             app.UseHttpsRedirection();

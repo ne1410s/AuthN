@@ -93,6 +93,30 @@ namespace AuthN.UnitTests.Domain
         }
 
         [Fact]
+        public async Task LegacyActivateAsync_MissingCode_ThrowsException()
+        {
+            // Arrange
+            var mockRepo = Mock.Create<IUserRepository>();
+            var sut = GetSutWithConfig(userRepository: mockRepo);
+            var request = new LegacyActivationRequest { Email = "email" };
+            var user = new AuthNUser
+            {
+                ActivationCode = null,
+                ActivationCodeGeneratedOn = DateTime.UtcNow.AddSeconds(-5),
+                RegisteredEmail = request.Email,
+            };
+            Mock.Arrange(() => mockRepo.FindByUsernameAsync(Arg.AnyString))
+                .Returns(Task.FromResult<AuthNUser?>(user));
+
+            // Act
+            Func<Task> act = () => sut.LegacyActivateAsync(request);
+
+            // Assert
+            await act.Should().ThrowAsync<DataStateException>()
+                .WithMessage("No matching users found.");
+        }
+
+        [Fact]
         public async Task LegacyActivateAsync_MissingGenDate_ThrowsException()
         {
             // Arrange
@@ -113,7 +137,7 @@ namespace AuthN.UnitTests.Domain
 
             // Assert
             await act.Should().ThrowAsync<DataStateException>()
-                .WithMessage("No matching users found.");
+                .WithMessage("Missing activation timestamp.");
         }
 
         [Fact]

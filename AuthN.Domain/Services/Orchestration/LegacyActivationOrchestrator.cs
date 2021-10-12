@@ -42,11 +42,16 @@ namespace AuthN.Domain.Services.Orchestration
             var user = await userRepo.FindByUsernameAsync(request.Username);
 
             if (user == null
-                || user.ActivationCode != request.ActivationCode
-                || user.ActivationCodeGeneratedOn == null
+                || user.ActivationCode == null
+                || user.ActivationCode.Value != request.ActivationCode
                 || user.RegisteredEmail != request.Email)
             {
                 throw new DataStateException("No matching users found.");
+            }
+
+            if (user.ActivationCodeGeneratedOn == null)
+            {
+                throw new DataStateException("Missing activation timestamp.");
             }
 
             if (user.ActivatedOn != null)
@@ -55,7 +60,7 @@ namespace AuthN.Domain.Services.Orchestration
             }
 
             var earliestCodeGeneratedOn = DateTime.UtcNow - activationWindow;
-            if (user.ActivationCodeGeneratedOn < earliestCodeGeneratedOn)
+            if (user.ActivationCodeGeneratedOn.Value < earliestCodeGeneratedOn)
             {
                 throw new OrchestrationException("Activation code expired.");
             }

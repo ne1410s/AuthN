@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
@@ -12,6 +13,7 @@ namespace AuthN.Api
         /// The main entry point to the application.
         /// </summary>
         /// <param name="args">The arguments.</param>
+        [ExcludeFromCodeCoverage(Justification = "Covered implicitly")]
         public static void Main(string[] args)
         {
             CreateHostBuilder(args).Build().Run();
