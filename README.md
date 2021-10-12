@@ -1,4 +1,5 @@
 ![dotnet build](https://github.com/ne1410s/AuthN/actions/workflows/dotnet.yml/badge.svg)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/1718b0d609a64562b4a6c0164f7aedec)](https://app.codacy.com/gh/ne1410s/AuthN?utm_source=github.com&utm_medium=referral&utm_content=ne1410s/AuthN&utm_campaign=Badge_Grade_Settings)
 [![Coverage Status](https://coveralls.io/repos/github/ne1410s/AuthN/badge.svg?branch=master)](https://coveralls.io/github/ne1410s/AuthN?branch=master)
 
 ```powershell
