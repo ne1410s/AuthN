@@ -9,6 +9,7 @@ namespace AuthN.UnitTests.Persistence.Repositories
     /// <summary>
     /// Tests for the <see cref="EfRoleRepository"/>.
     /// </summary>
+    [Collection("Sequential")]
     public class EfRoleRepositoryTests
     {
         [Fact]

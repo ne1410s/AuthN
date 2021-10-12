@@ -112,9 +112,9 @@ namespace AuthN.UnitTests.Domain.Orchestrators.Orchestrators
         }
 
         private static LegacyRegistrationOrchestrator GetSutWithConfig(
+            IUserRepository userRepository,
             double windowHours = 24,
-            IItemValidator<LegacyRegistrationRequest>? validator = null,
-            IUserRepository? userRepository = null)
+            IItemValidator<LegacyRegistrationRequest>? validator = null)
         {
             var config = new Dictionary<string, string>
             {
@@ -124,7 +124,6 @@ namespace AuthN.UnitTests.Domain.Orchestrators.Orchestrators
             var stubConfig = config.Stub();
             validator ??= Mock.Create<
                 IItemValidator<LegacyRegistrationRequest>>();
-            userRepository ??= Mock.Create<IUserRepository>();
 
             return new LegacyRegistrationOrchestrator(
                 stubConfig,

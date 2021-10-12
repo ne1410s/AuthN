@@ -19,14 +19,19 @@ namespace AuthN.UnitTests.Domain.Orchestrators
     /// </summary>
     public class LegacyLoginOrchestratorTests
     {
-        [Fact]
-        public async Task LegacyLoginAsync_HappyPath_ReturnsSuccess()
+        [Theory]
+        [InlineData(null)]
+        [InlineData(60)]
+        public async Task LegacyLoginAsync_HappyPath_ReturnsSuccess(
+            int? tokenDurationSeconds)
         {
             // Arrange
+            const int defaultTokenMins = 5;
             var mockRepo = Mock.Create<IUserRepository>();
             var mockValidator = Mock.Create<
                 IItemValidator<LegacyLoginRequest>>();
             var sut = GetSutWithConfig(
+                defaultTokenMins: defaultTokenMins,
                 userRepository: mockRepo,
                 validator: mockValidator);
             const string password = "pass";
@@ -46,14 +51,19 @@ namespace AuthN.UnitTests.Domain.Orchestrators
             {
                 Username = user.Username,
                 Password = password,
+                Duration = tokenDurationSeconds,
             };
 
             // Act
             var result = await sut.LegacyLoginAsync(request);
 
             // Assert
-            result?.User.Should().NotBeNull();
-            result!.Token.Should().NotBeEmpty();
+            var duration = tokenDurationSeconds ?? (defaultTokenMins * 60);
+            var expectExpiry = DateTime.Now.AddSeconds(duration);
+            var flex = TimeSpan.FromSeconds(3);
+            result.User.Should().NotBeNull();
+            result.Token.Should().NotBeEmpty();
+            result.TokenExpiresOn.Should().BeCloseTo(expectExpiry, flex);
             Mock.Assert(
                 () => mockValidator.AssertValid(request),
                 Occurs.Once());
@@ -117,11 +127,11 @@ namespace AuthN.UnitTests.Domain.Orchestrators
         }
 
         private static LegacyLoginOrchestrator GetSutWithConfig(
+            IUserRepository userRepository,
             string tokenIssuer = "issuer",
             string tokenSecret = "validlengthsecret",
             double defaultTokenMins = 60,
-            IItemValidator<LegacyLoginRequest>? validator = null,
-            IUserRepository? userRepository = null)
+            IItemValidator<LegacyLoginRequest>? validator = null)
         {
             var config = new Dictionary<string, string>
             {
@@ -132,7 +142,6 @@ namespace AuthN.UnitTests.Domain.Orchestrators
 
             var stubConfig = config.Stub();
             validator ??= Mock.Create<IItemValidator<LegacyLoginRequest>>();
-            userRepository ??= Mock.Create<IUserRepository>();
 
             return new LegacyLoginOrchestrator(
                 stubConfig,

@@ -155,7 +155,7 @@ namespace AuthN.UnitTests.Domain
             Roles = roles.Select(r => new AuthNRole { Name = r }).ToList()
         };
 
-        private static string? GetClaim(JwtSecurityToken jwt, string name)
-            => jwt.Claims.SingleOrDefault(c => c.Type == name)?.Value;
+        private static string GetClaim(JwtSecurityToken jwt, string name)
+            => jwt.Claims.Single(c => c.Type == name).Value;
     }
 }

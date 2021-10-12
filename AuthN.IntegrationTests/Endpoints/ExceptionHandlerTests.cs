@@ -1,63 +1,102 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
+using AuthN.Domain.Exceptions;
 using AuthN.Domain.Models.Request;
 using AuthN.Domain.Services.Orchestration;
+using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Telerik.JustMock;
 using Xunit;
 
 namespace AuthN.IntegrationTests.Endpoints
 {
+    [Collection("Sequential")]
     public class ExceptionHandlerTests
     {
-        [Fact]
-        public async Task LegacyWorkflow_UnhandledException_500()
+        public enum ErrorBehaviour
+        {
+            None,
+            Invalid,
+            DataState,
+            Orchestration,
+            Other,
+        }
+
+        [Theory]
+        [InlineData(ErrorBehaviour.None, false, 200)]
+        [InlineData(ErrorBehaviour.None, true, 422)]
+        [InlineData(ErrorBehaviour.Invalid, false, 422)]
+        [InlineData(ErrorBehaviour.DataState, false, 400)]
+        [InlineData(ErrorBehaviour.Orchestration, false, 400)]
+        [InlineData(ErrorBehaviour.Other, false, 500)]
+        public async Task LegacyLogin_ExceptionType_GetsMatchingStatusCode(
+            ErrorBehaviour errorBehaviour,
+            bool missingRequiredFields,
+            int expectedCode)
         {
             // Arrange
-            var request = new LegacyRegistrationRequest
+            var exception = MakeError(errorBehaviour);
+            using var sut = GetFactoryWithBadLogins(exception);
+            var client = sut.CreateClient();
+            var request = new LegacyLoginRequest
             {
-                Email = "bob@test.co",
-                Forename = "Bob",
-                Surname = "Smith",
-                Username = "bobsmith",
-                Password = "Test123!",
+                Username = missingRequiredFields ? string.Empty : "a",
+                Password = missingRequiredFields ? string.Empty : "a",
             };
 
             // Act
             var response = await client.SendJsonAsync(
-                "l-auth/register",
+                "l-auth/login",
                 HttpMethod.Post,
                 request);
 
             // Assert
-            var res = await response.ReadJsonAsync<object>();
-            res.Status.Should().Be(HttpStatusCode.InternalServerError);
-            res.SuccessData.Should().BeNull();
-            res.ErrorData.Should().NotBeNull();
+            var result = await response.ReadJsonAsync<LoginSuccess>();
+            result.Status.Should().Be((HttpStatusCode)expectedCode);
         }
 
-        private IntegrationTestingWebAppFactory GetLegacySut<TEx>()
-            where TEx : Exception
+        /// <summary>
+        /// Spins up a demo app where the login endpoint is stubbed to throw
+        /// the supplied exception (else an empty result, if null).
+        /// </summary>
+        /// <param name="exception">The exception to throw on login.</param>
+        /// <returns>The web app factory.</returns>
+        private static IntegrationTestingWebAppFactory GetFactoryWithBadLogins(
+            Exception? exception)
         {
-            var stubRegistrar = Mock.Create<ILegacyRegistrationOrchestrator>();
-            var stubActivator = Mock.Create<ILegacyActivationOrchestrator>();
             var stubAuthenticator = Mock.Create<ILegacyLoginOrchestrator>();
 
-            Mock.Arrange(() => stubRegistrar.LegacyRegisterAsync(
-                    Arg.IsAny<LegacyRegistrationRequest>()))
-                .Throws<TEx>();
+            if (exception != null)
+            {
+                Mock.Arrange(() => stubAuthenticator.LegacyLoginAsync(
+                        Arg.IsAny<LegacyLoginRequest>()))
+                    .Throws(exception);
+            }
+            else
+            {
+                Mock.Arrange(() => stubAuthenticator.LegacyLoginAsync(
+                        Arg.IsAny<LegacyLoginRequest>()))
+                    .Returns(Task.FromResult(new LoginSuccess()));
+            }
 
-            return new IntegrationTestingWebAppFactory(
-                servicesAction: services =>
-                {
-                    services.AddTransient(_ => stubRegistrar);
-
-                });
+            return new IntegrationTestingWebAppFactory(servicesAction: services
+                => services.AddTransient(_ => stubAuthenticator));
         }
+
+        /// <summary>
+        /// Creates an error indicative of a behaviour type.
+        /// </summary>
+        /// <param name="type">The error behaviour type.</param>
+        /// <returns>An exception.</returns>
+        private static Exception? MakeError(ErrorBehaviour type) => type switch
+        {
+            ErrorBehaviour.None => null,
+            ErrorBehaviour.Invalid => new ValidatorException(),
+            ErrorBehaviour.DataState => new DataStateException(null),
+            ErrorBehaviour.Orchestration => new OrchestrationException(null),
+            _ => new Exception(),
+        };
     }
 }

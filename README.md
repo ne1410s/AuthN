@@ -1,3 +1,8 @@
+```powershell
+# run this to pick up the accompanying tools
+dotnet tool restore
+```
+
 ## Test Coverage
 ```powershell
 # obtain fresh coverlet test coverage results

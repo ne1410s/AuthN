@@ -41,9 +41,10 @@ namespace AuthN.Domain.Services.Orchestration
             validator.AssertValid(request);
             var user = await userRepo.FindByUsernameAsync(request.Username);
 
-            if (user?.ActivationCode != request.ActivationCode
-                || user?.ActivationCodeGeneratedOn == null
-                || request.Email != user.RegisteredEmail)
+            if (user == null
+                || user.ActivationCode != request.ActivationCode
+                || user.ActivationCodeGeneratedOn == null
+                || user.RegisteredEmail != request.Email)
             {
                 throw new DataStateException("No matching users found.");
             }

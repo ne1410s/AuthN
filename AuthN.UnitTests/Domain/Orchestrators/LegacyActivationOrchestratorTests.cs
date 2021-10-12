@@ -171,7 +171,7 @@ namespace AuthN.UnitTests.Domain
             // Arrange
             var mockRepo = Mock.Create<IUserRepository>();
             const double windowHours = 24;
-            var sut = GetSutWithConfig(windowHours, userRepository: mockRepo);
+            var sut = GetSutWithConfig(mockRepo, windowHours);
             var request = new LegacyActivationRequest { Email = "email" };
             var user = new AuthNUser
             {
@@ -193,9 +193,9 @@ namespace AuthN.UnitTests.Domain
         }
 
         private static LegacyActivationOrchestrator GetSutWithConfig(
+            IUserRepository userRepository,
             double windowHours = 24,
-            IItemValidator<LegacyActivationRequest>? validator = null,
-            IUserRepository? userRepository = null)
+            IItemValidator<LegacyActivationRequest>? validator = null)
         {
             var config = new Dictionary<string, string>
             {
@@ -205,7 +205,6 @@ namespace AuthN.UnitTests.Domain
             var stubConfig = config.Stub();
             validator ??= Mock.Create<
                 IItemValidator<LegacyActivationRequest>>();
-            userRepository ??= Mock.Create<IUserRepository>();
 
             return new LegacyActivationOrchestrator(
                 stubConfig,

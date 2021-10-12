@@ -13,6 +13,7 @@ namespace AuthN.UnitTests.Persistence.Repositories
     /// <summary>
     /// Tests for the <see cref="EfUserRepository"/>.
     /// </summary>
+    [Collection("Sequential")]
     public class EfUserRepositoryTests
     {
         [Fact]
@@ -66,17 +67,16 @@ namespace AuthN.UnitTests.Persistence.Repositories
         public async Task ActivateAsync_ExistingUnactivated_UpdatesActivation()
         {
             // Arrange
-            var existingUser = CreateUserValidByDefault();
-            var db = DbUtils.SeedSqlite(s => s.Users.Add(existingUser));
+            var user = CreateUserValidByDefault();
+            var db = DbUtils.SeedSqlite(s => s.Users.Add(user));
             var sut = new EfUserRepository(db);
 
             // Act
-            await sut.ActivateAsync(existingUser.Username);
+            await sut.ActivateAsync(user.Username);
 
             // Assert
-            var dbUser = db.Users.SingleOrDefault(u =>
-                u.Username == existingUser.Username);
-            dbUser?.ActivatedOn.Should().NotBeNull();
+            var dbUser = db.Users.Single(u => u.Username == user.Username);
+            dbUser.ActivatedOn.Should().NotBeNull();
         }
 
         [Fact]
@@ -84,17 +84,16 @@ namespace AuthN.UnitTests.Persistence.Repositories
         {
             // Arrange
             var activated = new DateTime(2015, 10, 26);
-            var existingUser = CreateUserValidByDefault(activated: activated);
-            var db = DbUtils.SeedSqlite(s => s.Users.Add(existingUser));
+            var user = CreateUserValidByDefault(activated: activated);
+            var db = DbUtils.SeedSqlite(s => s.Users.Add(user));
             var sut = new EfUserRepository(db);
 
             // Act
-            await sut.ActivateAsync(existingUser.Username);
+            await sut.ActivateAsync(user.Username);
 
             // Assert
-            var dbUser = db.Users.SingleOrDefault(u =>
-                u.Username == existingUser.Username);
-            dbUser?.ActivatedOn.Should().BeSameDateAs(activated);
+            var dbUser = db.Users.Single(u => u.Username == user.Username);
+            dbUser.ActivatedOn.Should().BeSameDateAs(activated);
         }
 
         [Fact]

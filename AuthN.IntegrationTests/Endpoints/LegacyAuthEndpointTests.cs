@@ -2,7 +2,6 @@ using System;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using AuthN.Domain.Exceptions;
 using AuthN.Domain.Models.Request;
 using AuthN.Domain.Models.Storage;
 using AuthN.Domain.Services.Security;
@@ -11,6 +10,7 @@ using Xunit;
 
 namespace AuthN.IntegrationTests.Endpoints
 {
+    [Collection("Sequential")]
     public class LegacyAuthEndpointTests
     {
         private const string ActivatedUserPass = "Test123!";
@@ -83,83 +83,6 @@ namespace AuthN.IntegrationTests.Endpoints
             res.SuccessData.Should().NotBeNull();
             res.SuccessData!.ActivationCode.Should().NotBeEmpty();
             res.SuccessData!.ExpiresOn.Should().BeAfter(DateTime.UtcNow);
-        }
-
-        [Fact]
-        public async Task LegacyWorkflow_ModelStateInvalidRequest_422()
-        {
-            // Arrange
-            var invalidRequest = new LegacyRegistrationRequest
-            {
-                Forename = "Scanty",
-                Surname = "O'Details",
-            };
-
-            // Act
-            var response = await client.SendJsonAsync(
-                "l-auth/register",
-                HttpMethod.Post,
-                invalidRequest);
-
-            // Assert
-            var res = await response.ReadJsonAsync<LegacyRegistrationSuccess>();
-            res.Status.Should().Be(HttpStatusCode.UnprocessableEntity);
-            res.SuccessData.Should().BeNull();
-            res.ErrorData.Should().NotBeNull();
-        }
-
-        [Fact]
-        public async Task LegacyWorkflow_ValidatorInvalidRequest_422()
-        {
-            // Arrange
-            var invalidRequest = new LegacyRegistrationRequest
-            {
-                Email = "bob/test.de",
-                Forename = "Bob",
-                Surname = "Schmidt",
-                Username = "bobschmidt",
-                Password = "Test123!",
-            };
-
-            // Act
-            var response = await client.SendJsonAsync(
-                "l-auth/register",
-                HttpMethod.Post,
-                invalidRequest);
-
-            // Assert
-            var res = await response.ReadJsonAsync<LegacyRegistrationSuccess>();
-            res.Status.Should().Be(HttpStatusCode.UnprocessableEntity);
-            res.SuccessData.Should().BeNull();
-            res.ErrorData.Should().NotBeNull();
-        }
-
-        [Fact]
-        public async Task LegacyWorkflow_DynamicInvalidRequest_400()
-        {
-            // Arrange
-            var invalidStateRequest = new LegacyRegistrationRequest
-            {
-                Email = "bob@test.co",
-                Forename = "Bob",
-                Surname = "Smith",
-                Username = ActivatedUser.Username,
-                Password = "Test123!",
-            };
-
-            // Act
-            var response = await client.SendJsonAsync(
-                "l-auth/register",
-                HttpMethod.Post,
-                invalidStateRequest);
-
-            // Assert
-            var res = await response.ReadJsonAsync<LegacyRegistrationSuccess>();
-            res.Status.Should().Be(HttpStatusCode.BadRequest);
-            res.SuccessData.Should().BeNull();
-            res.ErrorData.Should().NotBeNull();
-            res.ErrorData!.Type.Should().Be(nameof(DataStateException));
-            res.ErrorData!.Message.Should().Be("This username is taken.");
         }
 
         [Fact]
