@@ -23,4 +23,4 @@ jobs:
         dotnet test --settings coverlet.runsettings
         dotnet tool restore
         dotnet reportgenerator -targetdir:coveragereport -reports:**/coverage.info -reporttypes:"lcov"
-        csmacnz.Coveralls --lcov -i coveragereport/lcov.info --repoToken ${COVERALLS_TOKEN} --commitId ${GITHUB_SHA} --commitBranch master
+        dotnet csmacnz.Coveralls --lcov -i coveragereport/lcov.info --repoToken ${COVERALLS_TOKEN} --commitId ${GITHUB_SHA} --commitBranch master
