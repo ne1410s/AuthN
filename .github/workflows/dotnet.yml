@@ -29,4 +29,4 @@ jobs:
         dotnet test --settings coverlet.runsettings
         dotnet tool restore
         dotnet reportgenerator -targetdir:coveragereport -reports:**/coverage.cobertura.xml -reporttypes:"lcov"
-        dotnet csmacnz.Coveralls --lcov -i coveragereport/lcov.info --repoToken "$COVERALLS_TOKEN" --commitId "$GITHUB_SHA" --commitBranch master --commitMessage "${{ github.event.head_commit.message }}"
+        dotnet csmacnz.Coveralls --lcov -i coveragereport/lcov.info --repoToken "$COVERALLS_TOKEN" --commitId "$GITHUB_SHA" --commitBranch master --commitMessage "${{ github.event.head_commit.message }}" --commitAuthor "$GITHUB_ACTOR" --jobId "$GITHUB_RUN_ID" --serviceName "github actions" --useRelativePaths
