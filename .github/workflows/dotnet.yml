@@ -24,7 +24,6 @@ jobs:
       env:
         COVERALLS_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
       run: |
-        echo "${{toJSON(github.event)}}"
         dotnet restore
         dotnet test --settings coverlet.runsettings
         dotnet tool restore
