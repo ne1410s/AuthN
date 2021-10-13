@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using AuthN.Api.Controllers;
 using AuthN.Domain.Models.Request;
-using AuthN.Domain.Services.Orchestration;
+using AuthN.Domain.Services.Orchestration.LegacyWorkflow;
 using Telerik.JustMock;
 using Xunit;
 

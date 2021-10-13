@@ -6,7 +6,7 @@ using AuthN.Api.Middleware;
 using AuthN.Domain.Exceptions;
 using AuthN.Domain.Models.Request;
 using AuthN.Domain.Models.Storage;
-using AuthN.Domain.Services.Orchestration;
+using AuthN.Domain.Services.Orchestration.LegacyWorkflow;
 using AuthN.Domain.Services.Storage;
 using AuthN.Domain.Services.Validation;
 using AuthN.Domain.Services.Validation.Models;

@@ -2,7 +2,7 @@
 using AuthN.Domain.Exceptions;
 using AuthN.Domain.Models.Request;
 
-namespace AuthN.Domain.Services.Orchestration
+namespace AuthN.Domain.Services.Orchestration.LegacyWorkflow
 {
     /// <summary>
     /// The activation orchestrator; whereby traditionally-registered users have

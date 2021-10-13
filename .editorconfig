@@ -10,5 +10,5 @@ dotnet_diagnostic.CS1591.severity = warning     # Missing XML comment for public
 # Roslynator:
 roslynator.max_line_length = 80
 dotnet_diagnostic.RCS0056.severity = warning    # A line is too long.
-dotnet_diagnostic.RCS1090.severity = none       # Add call to configure await.
+dotnet_diagnostic.RCS1090.severity = silent     # Add call to configure await.
 dotnet_diagnostic.RCS1194.severity = none       # Exception constructors.

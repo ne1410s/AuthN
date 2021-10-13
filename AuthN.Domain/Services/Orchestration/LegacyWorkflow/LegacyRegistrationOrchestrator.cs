@@ -8,7 +8,7 @@ using AuthN.Domain.Services.Storage;
 using AuthN.Domain.Services.Validation;
 using Microsoft.Extensions.Configuration;
 
-namespace AuthN.Domain.Services.Orchestration
+namespace AuthN.Domain.Services.Orchestration.LegacyWorkflow
 {
     /// <inheritdoc cref="ILegacyRegistrationOrchestrator"/>
     public class LegacyRegistrationOrchestrator

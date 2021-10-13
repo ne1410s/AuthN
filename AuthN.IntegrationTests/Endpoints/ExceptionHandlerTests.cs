@@ -4,7 +4,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using AuthN.Domain.Exceptions;
 using AuthN.Domain.Models.Request;
-using AuthN.Domain.Services.Orchestration;
+using AuthN.Domain.Services.Orchestration.LegacyWorkflow;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Telerik.JustMock;
