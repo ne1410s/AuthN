@@ -23,8 +23,9 @@ jobs:
       env:
         COVERALLS_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
       run: |
+        echo "${{toJSON(github.event)}}"
         dotnet restore
         dotnet test --settings coverlet.runsettings
         dotnet tool restore
         dotnet reportgenerator -targetdir:coveragereport -reports:**/coverage.cobertura.xml -reporttypes:"lcov"
-        dotnet csmacnz.Coveralls --lcov -i coveragereport/lcov.info --repoToken $COVERALLS_TOKEN --commitId $GITHUB_SHA --commitBranch master
+        dotnet csmacnz.Coveralls --lcov -i coveragereport/lcov.info --repoToken "$COVERALLS_TOKEN" --commitId "$GITHUB_SHA" --commitBranch master --commitMessage "${{ github.event.head_commit.message }}"
