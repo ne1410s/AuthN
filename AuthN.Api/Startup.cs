@@ -102,6 +102,8 @@ namespace AuthN.Api
             services.AddDbContext<AuthNDbContext>(
                 options => options.UseSqlServer(connectionString));
 
+            services.AddHttpClient();
+
             InjectOrchestrators(services);
             InjectValidators(services);
             InjectRepositories(services);

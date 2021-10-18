@@ -3,8 +3,22 @@
 <head>
     <meta charset="utf-8" />
     <title>This is a test</title>
+    <script>
+        window.addEventListener('load', () => {
+
+            document.querySelector('#btnGetToken').addEventListener('click', async () => {
+                var code = document.querySelector('#code').value;
+                var tokenUrl = 'https://localhost:44357/fb-auth/token?code=' + code;
+                var x = await fetch(tokenUrl);
+            });
+        });
+    </script>
 </head>
 <body>
-    <p>Hello, world!</p>
+    <a href="https://localhost:44357/fb-auth/login?redirect=members">Login (fb)</a>
+
+    <input id="code" type="text" placeholder="code goes here"/>
+    <input id="btnGetToken" type="button" value="get token"/>
+
 </body>
 </html>
