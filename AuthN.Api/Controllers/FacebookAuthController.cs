@@ -1,8 +1,14 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using AuthN.Domain.Exceptions;
 using AuthN.Domain.Models.Request;
+using AuthN.Domain.Models.Storage;
+using AuthN.Domain.Services.Security;
+using AuthN.Domain.Services.Storage;
+using AuthN.Domain.Services.Validation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -27,19 +33,41 @@ namespace AuthN.Api.Controllers
         private const string ControllerRoute = "fb-auth";
         private const string LoginRedirectRoute = "redirect";
         private const string FieldList =
-            "id,email,name,first_name,last_name,picture";
+            "id,email,first_name,last_name";
         private static readonly string LoginRedirectPath =
             $"{ControllerRoute}/{LoginRedirectRoute}";
 
+        private readonly string jwtIssuer;
+        private readonly string jwtSecret;
+        private readonly uint defaultTokenSecs;
         private readonly string clientId = "261081602596593";
-        private readonly string appSecret = "5ae1b62114a5fecc6a248ed1ca0688db";
+        private readonly string appSecret = "???";
         private readonly HttpClient client;
+        private readonly IUserRepository userRepository;
+        private readonly IItemValidator<AuthNUser> userValidator;
 
+        /// <summary>
+        /// Initialises a new instance of the
+        /// <see cref="FacebookAuthController"/> class.
+        /// </summary>
+        /// <param name="config">The configuration.</param>
+        /// <param name="httpClientFactory">The http client factory.</param>
+        /// <param name="userRepository">The user repository.</param>
+        /// <param name="userValidator">The user validator.</param>
         public FacebookAuthController(
             IConfiguration config,
-            IHttpClientFactory clientFactory)
+            IHttpClientFactory httpClientFactory,
+            IUserRepository userRepository,
+            IItemValidator<AuthNUser> userValidator)
         {
-            client = clientFactory.CreateClient();
+            jwtIssuer = config["Tokens:Issuer"];
+            jwtSecret = config["Tokens:Secret"];
+            var defaultTokenMins = config["Tokens:DefTokenMinutes"];
+            defaultTokenSecs = (uint)(double.Parse(defaultTokenMins) * 60);
+
+            client = httpClientFactory.CreateClient();
+            this.userRepository = userRepository;
+            this.userValidator = userValidator;
         }
 
         /// <summary>
@@ -80,6 +108,11 @@ namespace AuthN.Api.Controllers
             Response.Redirect(urlBuilder.ToString());
         }
 
+        /// <summary>
+        /// Gets a token from the interim code.
+        /// </summary>
+        /// <param name="code">The code.</param>
+        /// <returns>A login success.</returns>
         [HttpGet]
         [Route("token")]
         public async Task<LoginSuccess> GetToken(string code)
@@ -102,17 +135,50 @@ namespace AuthN.Api.Controllers
             var infoUrlBuilder = new StringBuilder(InfoUrl);
             infoUrlBuilder.Append("?fields=").Append(FieldList);
             infoUrlBuilder.Append("&access_token=").Append(token);
+            
             var infoResponse = await client.GetAsync(infoUrlBuilder.ToString());
             var infoBody = await infoResponse.Content.ReadAsStringAsync();
             infoResponse.EnsureSuccessStatusCode();
+            var infoJson = JsonSerializer.Deserialize<JsonElement>(infoBody);
+            var authEmail = infoJson.GetProperty("email").GetString()
+                ?? throw new OrchestrationException("No email received");
+            var authId = infoJson.GetProperty("id").GetString()
+                ?? throw new OrchestrationException("No id received");
 
+            var repoUser = await userRepository.FindByEmailAsync(authEmail);
 
-            return new LoginSuccess
+            // If no user exists
+            if (repoUser == null)
             {
-                Token = default!,
-                TokenExpiresOn = default,
-                User = default!,
-            };
+                var authName = infoJson.GetProperty("first_name").GetString();
+                var authSurname = infoJson.GetProperty("last_name").GetString();
+
+                repoUser = new AuthNUser
+                {
+                    CreatedOn = DateTime.UtcNow,
+                    FacebookId = authId,
+                    Forename = authName!,
+                    Surname = authSurname!,
+                    RegisteredEmail = authEmail,
+                };
+
+                try
+                {
+                    userValidator.AssertValid(repoUser);
+                    await userRepository.AddAsync(repoUser);
+                }
+                catch (ValidatorException valEx)
+                {
+                    // Return a 202 or similar, for partially-populated form
+                    // Returns user details for later form submission
+                }
+            }
+            else if (authId != repoUser.FacebookId)
+            {
+                await userRepository.SetFacebookIdAsync(repoUser, authId);
+            }
+
+            return repoUser.Tokenise(defaultTokenSecs, jwtIssuer, jwtSecret);
         }
 
         [Authorize]

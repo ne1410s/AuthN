@@ -25,17 +25,17 @@ namespace AuthN.Domain.Services.Validation.Models
             var minEmailLength = int.Parse(cSection["MinEmailLength"]);
 
             RuleFor(x => x.Username)
-                .NotEmpty()
-                .Length(minUsernameLength, 50);
+                .Length(minUsernameLength, 50)
+                .NotEmpty().Unless(IsThirdPartyAuthenticated);
             RuleFor(x => x.RegisteredEmail).EmailAddress()
                 .NotEmpty()
                 .Length(minEmailLength, 512);
             RuleFor(x => x.PasswordSalt)
-                .NotEmpty()
-                .Length(32, 512);
+                .Length(32, 512)
+                .NotEmpty().Unless(IsThirdPartyAuthenticated);
             RuleFor(x => x.PasswordHash)
-                .NotEmpty()
-                .Length(32, 512);
+                .Length(32, 512)
+                .NotEmpty().Unless(IsThirdPartyAuthenticated);
             RuleFor(x => x.Forename)
                 .NotEmpty()
                 .Length(2, 50);
@@ -43,6 +43,11 @@ namespace AuthN.Domain.Services.Validation.Models
                 .NotEmpty()
                 .Length(2, 50);
             RuleFor(x => x.CreatedOn).NotEmpty();
+        }
+
+        private bool IsThirdPartyAuthenticated(AuthNUser user)
+        {
+            return !string.IsNullOrWhiteSpace(user.FacebookId);
         }
     }
 }

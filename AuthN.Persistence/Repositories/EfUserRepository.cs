@@ -51,5 +51,13 @@ namespace AuthN.Persistence.Repositories
             return await db.Users.SingleOrDefaultAsync(
                 r => r.Username == username);
         }
+
+        /// <inheritdoc/>
+        public async Task SetFacebookIdAsync(AuthNUser user, string? authId)
+        {
+            user.FacebookId = authId;
+            db.Users.Update(user);
+            await db.SaveChangesAsync();
+        }
     }
 }

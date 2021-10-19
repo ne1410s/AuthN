@@ -23,6 +23,13 @@ namespace AuthN.Domain.Services.Storage
         public Task ActivateAsync(string username);
 
         /// <summary>
+        /// Sets Facebook authentication provider id on the record.
+        /// </summary>
+        /// <param name="user">The user.</param>
+        /// <param name="authId">The auth provider id.</param>
+        public Task SetFacebookIdAsync(AuthNUser user, string? authId);
+
+        /// <summary>
         /// Gets a user by their username, or null if none found.
         /// </summary>
         /// <param name="username">The username.</param>

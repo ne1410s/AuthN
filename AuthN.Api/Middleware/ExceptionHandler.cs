@@ -59,6 +59,8 @@ namespace AuthN.Api.Middleware
                     response = new(errorType, ex.Message);
                 }
 
+                httpContext.Response.Headers.Add(
+                    "Access-Control-Allow-Origin", "*");
                 httpContext.Response.StatusCode = (int)responseCode;
                 httpContext.Response.ContentType = "application/json";
                 var jsonOpts = new JsonSerializerOptions

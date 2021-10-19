@@ -11,17 +11,17 @@ namespace AuthN.Domain.Models.Storage
         /// <summary>
         /// Gets the username.
         /// </summary>
-        public string Username { get; init; } = default!;
+        public string? Username { get; init; }
 
         /// <summary>
         /// Gets the password salt.
         /// </summary>
-        public string PasswordSalt { get; init; } = default!;
+        public string? PasswordSalt { get; init; }
 
         /// <summary>
         /// Gets the password hash.
         /// </summary>
-        public string PasswordHash { get; init; } = default!;
+        public string? PasswordHash { get; init; }
 
         /// <summary>
         /// Gets the forename.
@@ -38,6 +38,11 @@ namespace AuthN.Domain.Models.Storage
         /// activated.
         /// </summary>
         public string RegisteredEmail { get; init; } = default!;
+
+        /// <summary>
+        /// Gets or sets the facebook id, if associated.
+        /// </summary>
+        public string? FacebookId { get; set; }
 
         /// <summary>
         /// Gets the date the activation code was last generated.
