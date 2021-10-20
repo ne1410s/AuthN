@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Login</title>
+    <link rel="stylesheet" href="../style.css" />
+    <script src="../main.js"></script>
+    <script>
+      window.addEventListener('load', async () => {
+
+        q2a('#btnFacebook')[0].addEventListener('click', () => {
+          location = 'https://localhost:44357/fb-auth/login?redirect=login';
+        });
+
+        var codeQueryIndex = location.search.indexOf('code=');
+        if (codeQueryIndex != -1) {
+          var code = location.search.substring(codeQueryIndex + 5);
+          console.log('code:', code);
+          var tokenUrl = 'https://localhost:44357/fb-auth/token?code=' + code;
+          var x = await fetch(tokenUrl);
+        }
+      });
+    </script>
+  </head>
+  <body>
+    <h3>Login</h3>
+    <input type="button" id="btnFacebook" value="Login (fb)"/>
+  </body>
+</html>

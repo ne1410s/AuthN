@@ -1,0 +1,14 @@
+body {
+  font: 18px Calibri;
+}
+
+.loading {
+  background: url(loading.svg) no-repeat center center !important;
+  background-size: 42px 42px !important;
+  min-height: 42px !important;
+}
+
+.loading > * {
+  opacity: 0.5;
+  transition: opacity 0.3s;
+}
