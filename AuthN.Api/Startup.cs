@@ -56,6 +56,12 @@ namespace AuthN.Api
         /// <param name="services">The service collection.</param>
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(builder =>
+                    builder.WithOrigins(Configuration["AllowedHosts"]));
+            });
+
             services.AddControllers()
                 .AddJsonOptions(options =>
                 {
@@ -132,6 +138,7 @@ namespace AuthN.Api
                 c.SupportedSubmitMethods(Array.Empty<SubmitMethod>());
             });
 
+            app.UseCors();
             app.UseHttpsRedirection();
             app.UseRouting();
             app.UseAuthorization();

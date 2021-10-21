@@ -10,12 +10,9 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AuthN.Persistence.Migrations
 {
     [DbContext(typeof(AuthNDbContext))]
-    [Migration("20211012203843_InitialCreate")]
+    [Migration("20211021093901_InitialCreate")]
     partial class InitialCreate
     {
-        /// <summary>
-        /// Builds the target model.
-        /// </summary>
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
@@ -77,18 +74,23 @@ namespace AuthN.Persistence.Migrations
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime>("DateOfBirth")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FacebookId")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
                     b.Property<string>("Forename")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("PasswordHash")
-                        .IsRequired()
                         .HasMaxLength(512)
                         .HasColumnType("nvarchar(512)");
 
                     b.Property<string>("PasswordSalt")
-                        .IsRequired()
                         .HasMaxLength(512)
                         .HasColumnType("nvarchar(512)");
 
@@ -103,7 +105,6 @@ namespace AuthN.Persistence.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Username")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -113,7 +114,8 @@ namespace AuthN.Persistence.Migrations
                         .IsUnique();
 
                     b.HasIndex("Username")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[Username] IS NOT NULL");
 
                     b.ToTable("Users");
                 });

@@ -34,6 +34,11 @@ namespace AuthN.Domain.Models.Storage
         public string Surname { get; init; } = default!;
 
         /// <summary>
+        /// Gets the date of birth.
+        /// </summary>
+        public DateTime DateOfBirth { get; init; }
+
+        /// <summary>
         /// Gets the email address with which the user is (or is going to be)
         /// activated.
         /// </summary>

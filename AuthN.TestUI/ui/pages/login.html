@@ -15,10 +15,18 @@
 
         var codeQueryIndex = location.search.indexOf('code=');
         if (codeQueryIndex != -1) {
-          var code = location.search.substring(codeQueryIndex + 5);
-          console.log('code:', code);
-          var tokenUrl = 'https://localhost:44357/fb-auth/token?code=' + code;
-          var x = await fetch(tokenUrl);
+          var providerCode = location.search.substring(codeQueryIndex + 5);
+          var tokenUrl = 'https://localhost:44357/fb-auth/login_int?code=' + providerCode;
+          var response = await fetch(tokenUrl);
+          var body = await response.json();
+          if (body.login) {
+            // TODO: Add to session storage
+            location = "/members";
+          }
+          else if (body.registration) {
+            var qs = new URLSearchParams({ ...body.registration, providerCode });
+            location = "/register?" + qs;
+          }
         }
       });
     </script>
@@ -26,5 +34,6 @@
   <body>
     <h3>Login</h3>
     <input type="button" id="btnFacebook" value="Login (fb)"/>
+    <p>Go back <a href="/">home</a></p>
   </body>
 </html>

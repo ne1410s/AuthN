@@ -72,6 +72,9 @@ namespace AuthN.Persistence.Migrations
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime>("DateOfBirth")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("FacebookId")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");

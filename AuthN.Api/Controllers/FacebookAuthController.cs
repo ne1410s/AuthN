@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Globalization;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using AuthN.Domain.Exceptions;
 using AuthN.Domain.Models.Request;
@@ -32,16 +34,18 @@ namespace AuthN.Api.Controllers
         private const string ResponseType = "code";
         private const string ControllerRoute = "fb-auth";
         private const string LoginRedirectRoute = "redirect";
+        private const string PermsList = "email,user_birthday";
         private const string FieldList =
-            "id,email,first_name,last_name";
+            "id,email,first_name,last_name,birthday";
+        private static readonly CultureInfo YankeeCulture = new("en-US");
         private static readonly string LoginRedirectPath =
             $"{ControllerRoute}/{LoginRedirectRoute}";
 
         private readonly string jwtIssuer;
         private readonly string jwtSecret;
-        private readonly uint defaultTokenSecs;
+        private readonly uint tokenSeconds;
         private readonly string clientId = "261081602596593";
-        private readonly string appSecret = "???";
+        private readonly string appSecret = "636be92ae449064d8c7cc00470b1a27d";
         private readonly HttpClient client;
         private readonly IUserRepository userRepository;
         private readonly IItemValidator<AuthNUser> userValidator;
@@ -63,7 +67,7 @@ namespace AuthN.Api.Controllers
             jwtIssuer = config["Tokens:Issuer"];
             jwtSecret = config["Tokens:Secret"];
             var defaultTokenMins = config["Tokens:DefTokenMinutes"];
-            defaultTokenSecs = (uint)(double.Parse(defaultTokenMins) * 60);
+            tokenSeconds = (uint)(double.Parse(defaultTokenMins) * 60);
 
             client = httpClientFactory.CreateClient();
             this.userRepository = userRepository;
@@ -76,19 +80,20 @@ namespace AuthN.Api.Controllers
         /// <param name="redirect">The url to redirect to after login.</param>
         [HttpGet]
         [Route("login")]
-        public void Login(string redirect)
+        public void LoginWithFacebook(string redirect)
         {
             var redirHost = Request.Host.Value;
             var redir = $"{Request.Scheme}://{redirHost}/{LoginRedirectPath}";
-            
+
             var referrer = Request.GetTypedHeaders().Referer?.AbsoluteUri;
-            var callback = $"{referrer ?? "https://localhost"}/{redirect}";
+            var callback = (referrer ?? "https://localhost/") + redirect;
 
             var urlBuilder = new StringBuilder(LoginUrl);
             urlBuilder.Append("?client_id=").Append(clientId);
             urlBuilder.Append("&redirect_uri=").Append(redir);
             urlBuilder.Append("&state=").Append(callback);
             urlBuilder.Append("&responseType=").Append(ResponseType);
+            urlBuilder.Append("&scope=").Append(PermsList);
 
             Response.Redirect(urlBuilder.ToString());
         }
@@ -109,13 +114,108 @@ namespace AuthN.Api.Controllers
         }
 
         /// <summary>
-        /// Gets a token from the interim code.
+        /// Logs in internally, based on the previously obtained provider code.
+        /// The user may or may not exist already; this is reflected in the
+        /// response.
         /// </summary>
         /// <param name="code">The code.</param>
-        /// <returns>A login success.</returns>
+        /// <returns>A login response.</returns>
         [HttpGet]
-        [Route("token")]
-        public async Task<LoginSuccess> GetToken(string code)
+        [Route("login_int")]
+        public async Task<OAuthLoginResponse> LoginInternally(string code)
+        {
+            var data = await GetDataAsync(code);
+            var dbUser = await userRepository.FindByEmailAsync(data.Email);
+
+            // If no user exists
+            if (dbUser == null)
+            {
+                return new()
+                {
+                    Registration = new()
+                    {
+                        ProviderId = data.Id,
+                        Email = data.Email,
+                        Forename = data.FirstName,
+                        Surname = data.LastName,
+                        DateOfBirth = data.DateOfBirth,
+                    }
+                };
+            }
+
+            // If user exists, ensure their provider id is up to date
+            if (dbUser.FacebookId != data.Id)
+            {
+                await userRepository.SetFacebookIdAsync(dbUser, data.Id);
+            }
+
+            return new()
+            {
+                Login = dbUser.Tokenise(tokenSeconds, jwtIssuer, jwtSecret)
+            };
+        }
+
+        [HttpPost]
+        [Route("register")]
+        public async Task<LoginSuccess> Register(
+            [FromForm]OAuthRegistrationRequest req)
+        {
+            var data = await GetDataAsync(req.ProviderCode);
+            if (data.Id != req.ProviderId || data.Email != req.Email)
+            {
+                throw new OrchestrationException("Data anomaly");
+            }
+
+            var newUser = new AuthNUser
+            {
+                ActivatedOn = DateTime.UtcNow,
+                CreatedOn = DateTime.UtcNow,
+                DateOfBirth = req.DateOfBirth,
+                FacebookId = req.ProviderId,
+                Forename = req.Forename,
+                Surname = req.Surname,
+                RegisteredEmail = req.Email,
+            };
+
+            userValidator.AssertValid(newUser);
+            await userRepository.AddAsync(newUser);
+
+            return newUser.Tokenise(tokenSeconds, jwtIssuer, jwtSecret);
+        }
+
+        [Authorize]
+        [HttpGet]
+        [Route("testlol")]
+        public void TestLol()
+        {
+
+        }
+
+        private class FacebookUserData
+        {
+            [JsonPropertyName("id")]
+            public string Id { get; set; } = default!;
+            
+            [JsonPropertyName("email")]
+            public string Email { get; set; } = default!;
+
+            [JsonPropertyName("first_name")]
+            public string FirstName { get; set; } = default!;
+
+            [JsonPropertyName("last_name")]
+            public string LastName { get; set; } = default!;
+
+            [JsonPropertyName("birthday")]
+            public string Birthday { get; set; } = default!;
+
+            public DateTime DateOfBirth => DateTime.ParseExact(
+                Birthday,
+                "MM/dd/yyyy",
+                YankeeCulture,
+                DateTimeStyles.None);
+        }
+
+        private async Task<FacebookUserData> GetDataAsync(string code)
         {
             var redirHost = Request.Host.Value;
             var redir = $"{Request.Scheme}://{redirHost}/{LoginRedirectPath}";
@@ -126,67 +226,20 @@ namespace AuthN.Api.Controllers
             urlBuilder.Append("&client_secret=").Append(appSecret);
             urlBuilder.Append("&code=").Append(code);
 
-            var response = await client.GetAsync(urlBuilder.ToString());
-            var body = await response.Content.ReadAsStringAsync();
-            response.EnsureSuccessStatusCode();
-            var json = JsonSerializer.Deserialize<JsonElement>(body);
-            var token = json.GetProperty("access_token").GetString();
+            var tokenResponse = await client.GetAsync(urlBuilder.ToString());
+            var tokenBody = await tokenResponse.Content.ReadAsStringAsync();
+            tokenResponse.EnsureSuccessStatusCode();
+            var tokenJson = JsonSerializer.Deserialize<JsonElement>(tokenBody);
+            var extToken = tokenJson.GetProperty("access_token").GetString();
 
             var infoUrlBuilder = new StringBuilder(InfoUrl);
             infoUrlBuilder.Append("?fields=").Append(FieldList);
-            infoUrlBuilder.Append("&access_token=").Append(token);
-            
-            var infoResponse = await client.GetAsync(infoUrlBuilder.ToString());
-            var infoBody = await infoResponse.Content.ReadAsStringAsync();
-            infoResponse.EnsureSuccessStatusCode();
-            var infoJson = JsonSerializer.Deserialize<JsonElement>(infoBody);
-            var authEmail = infoJson.GetProperty("email").GetString()
-                ?? throw new OrchestrationException("No email received");
-            var authId = infoJson.GetProperty("id").GetString()
-                ?? throw new OrchestrationException("No id received");
+            infoUrlBuilder.Append("&access_token=").Append(extToken);
 
-            var repoUser = await userRepository.FindByEmailAsync(authEmail);
-
-            // If no user exists
-            if (repoUser == null)
-            {
-                var authName = infoJson.GetProperty("first_name").GetString();
-                var authSurname = infoJson.GetProperty("last_name").GetString();
-
-                repoUser = new AuthNUser
-                {
-                    CreatedOn = DateTime.UtcNow,
-                    FacebookId = authId,
-                    Forename = authName!,
-                    Surname = authSurname!,
-                    RegisteredEmail = authEmail,
-                };
-
-                try
-                {
-                    userValidator.AssertValid(repoUser);
-                    await userRepository.AddAsync(repoUser);
-                }
-                catch (ValidatorException valEx)
-                {
-                    // Return a 202 or similar, for partially-populated form
-                    // Returns user details for later form submission
-                }
-            }
-            else if (authId != repoUser.FacebookId)
-            {
-                await userRepository.SetFacebookIdAsync(repoUser, authId);
-            }
-
-            return repoUser.Tokenise(defaultTokenSecs, jwtIssuer, jwtSecret);
-        }
-
-        [Authorize]
-        [HttpGet]
-        [Route("testlol")]
-        public void TestLol()
-        {
-
+            var response = await client.GetAsync(infoUrlBuilder.ToString());
+            var body = await response.Content.ReadAsStringAsync();
+            response.EnsureSuccessStatusCode();
+            return JsonSerializer.Deserialize<FacebookUserData>(body)!;
         }
     }
 }

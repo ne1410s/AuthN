@@ -25,6 +25,7 @@ namespace AuthN.Persistence.EntityConfig
             builder.Property(r => r.PasswordHash).HasMaxLength(512);
             builder.Property(r => r.Forename).IsRequired().HasMaxLength(50);
             builder.Property(r => r.Surname).IsRequired().HasMaxLength(50);
+            builder.Property(r => r.DateOfBirth).IsRequired();
             builder.Property(r => r.FacebookId).HasMaxLength(50);
 
             // Many-to-many: an implicit "pure" join table is created

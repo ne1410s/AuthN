@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Register</title>
+    <link rel="stylesheet" href="../style.css" />
+    <script src="../main.js"></script>
+    <script>
+      window.addEventListener('load', () => {
+
+        var form = document.forms[0];
+        var entries = new URLSearchParams(location.search.substring(1)).entries();
+        for(const [key, value] of entries) {
+          (form[key] ?? {}).value = value;
+
+          console.log(key, ':', value);
+
+        }
+        
+      });
+    </script>
+  </head>
+  <body>
+    <h3>Register</h3>
+    <form action="https://localhost:44357/fb-auth/register">
+      <div>
+        <input type="text" name="providerCode"/>
+      </div>
+      <div>
+        <input type="text" name="providerId"/>
+      </div>
+      <div>
+        <input type="submit" value="Submit"/>
+      </div>
+    </form>
+  </body>
+</html>

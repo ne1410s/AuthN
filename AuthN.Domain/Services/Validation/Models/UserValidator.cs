@@ -42,6 +42,8 @@ namespace AuthN.Domain.Services.Validation.Models
             RuleFor(x => x.Surname)
                 .NotEmpty()
                 .Length(2, 50);
+            RuleFor(x => x.DateOfBirth)
+                .NotEmpty();
             RuleFor(x => x.CreatedOn).NotEmpty();
         }
 

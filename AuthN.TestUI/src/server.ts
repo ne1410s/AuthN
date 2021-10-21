@@ -9,6 +9,7 @@ expr_api.get('/loading.svg', (q, r) => r.sendFile(path.resolve(__dirname, '../ui
 expr_api.get('/main.js', (q, r) => r.sendFile(path.resolve(__dirname, '../ui/main.js')));
 expr_api.get('/', (q, r) => r.sendFile(path.resolve(__dirname, '../ui/pages/index.html')));
 expr_api.get('/login', (q, r) => r.sendFile(path.resolve(__dirname, '../ui/pages/login.html')));
+expr_api.get('/register', (q, r) => r.sendFile(path.resolve(__dirname, '../ui/pages/register.html')));
 expr_api.get('/members', (q, r) => r.sendFile(path.resolve(__dirname, '../ui/pages/members.html')));
 
 // Start!
