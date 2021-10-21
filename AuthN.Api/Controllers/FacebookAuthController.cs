@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.Net.Http;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -31,6 +32,7 @@ namespace AuthN.Api.Controllers
             "https://graph.facebook.com/v12.0/oauth/access_token";
         private const string InfoUrl = "https://graph.facebook.com/me";
 
+        private const string SigningKey = "co;£$uf97c9_3£E£2";
         private const string ResponseType = "code";
         private const string ControllerRoute = "fb-auth";
         private const string LoginRedirectRoute = "redirect";
@@ -139,6 +141,7 @@ namespace AuthN.Api.Controllers
                         Forename = data.FirstName,
                         Surname = data.LastName,
                         DateOfBirth = data.DateOfBirth,
+                        Checksum = GetChecksum(data.Id, data.Email),
                     }
                 };
             }
@@ -157,11 +160,10 @@ namespace AuthN.Api.Controllers
 
         [HttpPost]
         [Route("register")]
-        public async Task<LoginSuccess> Register(
-            [FromForm]OAuthRegistrationRequest req)
+        public async Task<LoginSuccess> Register(OAuthRegistrationRequest req)
         {
-            var data = await GetDataAsync(req.ProviderCode);
-            if (data.Id != req.ProviderId || data.Email != req.Email)
+            var checksum = GetChecksum(req.ProviderId, req.Email);
+            if (checksum != req.Checksum)
             {
                 throw new OrchestrationException("Data anomaly");
             }
@@ -213,6 +215,13 @@ namespace AuthN.Api.Controllers
                 "MM/dd/yyyy",
                 YankeeCulture,
                 DateTimeStyles.None);
+        }
+
+        private string GetChecksum(string providerId, string email)
+        {
+            var payload = providerId + email + SigningKey;
+            var bytes = Encoding.UTF8.GetBytes(payload);
+            return Convert.ToBase64String(SHA256.HashData(bytes));
         }
 
         private async Task<FacebookUserData> GetDataAsync(string code)

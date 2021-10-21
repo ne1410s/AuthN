@@ -43,5 +43,11 @@ namespace AuthN.Domain.Models.Request
         /// </summary>
         [Required]
         public DateTime DateOfBirth { get; init; }
+
+        /// <summary>
+        /// Gets a checksum.
+        /// </summary>
+        [Required]
+        public string Checksum { get; init; } = default!;
     }
 }

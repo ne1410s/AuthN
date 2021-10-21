@@ -20,8 +20,8 @@
           var response = await fetch(tokenUrl);
           var body = await response.json();
           if (body.login) {
-            // TODO: Add to session storage
-            location = "/members";
+            console.log('LOGIN OK - STORE TOKEN!');
+            //location = '/members';
           }
           else if (body.registration) {
             var qs = new URLSearchParams({ ...body.registration, providerCode });

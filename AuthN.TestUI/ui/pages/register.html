@@ -11,28 +11,59 @@
 
         var form = document.forms[0];
         var entries = new URLSearchParams(location.search.substring(1)).entries();
-        for(const [key, value] of entries) {
+        for(var [key, value] of entries) {
+          if (key == 'dateOfBirth') value = value.substring(0, 10);
           (form[key] ?? {}).value = value;
-
-          console.log(key, ':', value);
-
         }
-        
+
+        form.addEventListener('submit', async event => {
+          event.preventDefault();
+          if (form.checkValidity()) {
+            const url = 'https://localhost:44357/fb-auth/register';
+            const params = new URLSearchParams(new FormData(form));
+            const body = JSON.stringify(Object.fromEntries(params.entries()));
+            const headers = { 'Content-Type': 'application/json' };
+            const response = await fetch(url, { method: 'post', body, headers });
+            const json = await response.json();
+            console.log(response.status, json);
+
+            // if (response.ok) {
+            //   console.log('REG OK - STORE TOKEN!');
+            //   location = '/members';
+            // }
+          }
+        });
       });
     </script>
   </head>
   <body>
     <h3>Register</h3>
-    <form action="https://localhost:44357/fb-auth/register">
+    <form>
       <div>
-        <input type="text" name="providerCode"/>
+        <input type="hidden" name="providerCode"/>
       </div>
       <div>
-        <input type="text" name="providerId"/>
+        <input type="hidden" name="providerId"/>
+      </div>
+      <div>
+        <input type="hidden" name="checksum"/>
+      </div>
+      <div>
+        <input type="email" name="email" readonly/>
+      </div>
+      <div>
+        <input type="text" name="forename" required pattern=".{2,50}"/>
+      </div>
+      <div>
+        <input type="text" name="surname" required pattern=".{2,50}"/>
+      </div>
+      <div>
+        <input type="date" name="dateOfBirth" required/>
       </div>
       <div>
         <input type="submit" value="Submit"/>
       </div>
     </form>
+    <p>Go back <a href="/">home</a></p>
   </body>
 </html>

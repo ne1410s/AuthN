@@ -58,8 +58,9 @@ namespace AuthN.Api
         {
             services.AddCors(options =>
             {
-                options.AddDefaultPolicy(builder =>
-                    builder.WithOrigins(Configuration["AllowedHosts"]));
+                options.AddDefaultPolicy(builder => builder
+                    .WithOrigins(Configuration["AllowedHosts"])
+                    .WithHeaders("Content-Type"));
             });
 
             services.AddControllers()
