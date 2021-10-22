@@ -9,8 +9,12 @@
     <script>
       window.addEventListener('load', async () => {
 
+        const token = localStorage.getItem('token');
+        const tokenIsValid = !!token; // TODO!!
+        if (tokenIsValid) { return location = '/members'; }
+
         q2a('#btnFacebook')[0].addEventListener('click', () => {
-          location = 'https://localhost:44357/fb-auth/login?redirect=login';
+          return location = 'https://localhost:44357/fb-auth/login?redirect=login';
         });
 
         var codeQueryIndex = location.search.indexOf('code=');
@@ -20,20 +24,45 @@
           var response = await fetch(tokenUrl);
           var body = await response.json();
           if (body.login) {
-            console.log('LOGIN OK - STORE TOKEN!');
-            //location = '/members';
+            localStorage.setItem('token', body.login.token);
+            return location = '/members';
           }
           else if (body.registration) {
             var qs = new URLSearchParams({ ...body.registration, providerCode });
-            location = "/register?" + qs;
+            return location = "/register?" + qs;
           }
         }
+
+        var form = document.forms[0];
+        form.addEventListener('submit', async event => {
+          event.preventDefault();
+          if (form.checkValidity()) {
+            const url = 'https://localhost:44357/l-auth/login';
+            const params = new URLSearchParams(new FormData(form));
+            const body = JSON.stringify(Object.fromEntries(params.entries()));
+            const headers = { 'Content-Type': 'application/json' };
+            const response = await fetch(url, { method: 'post', body, headers });
+            const json = await response.json();
+            if (response.ok) {
+              localStorage.setItem('token', json.token);
+              return location = '/members';
+            }
+          }
+        });
       });
     </script>
   </head>
   <body>
     <h3>Login</h3>
     <input type="button" id="btnFacebook" value="Login (fb)"/>
+
+    <form>
+      <input type="text" name="username" required pattern=".{6,}" placeholder="username"/>
+      <input type="password" name="password" required pattern=".{8,}" placeholder="password"/>
+      <input type="submit"/>
+    </form>
+    <p>No account? Register <a href="/register">here</a></p>
+
     <p>Go back <a href="/">home</a></p>
   </body>
 </html>

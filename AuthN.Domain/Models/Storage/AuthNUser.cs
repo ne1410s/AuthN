@@ -9,6 +9,11 @@ namespace AuthN.Domain.Models.Storage
     public class AuthNUser
     {
         /// <summary>
+        /// Gets the user id.
+        /// </summary>
+        public long UserId { get; init; }
+
+        /// <summary>
         /// Gets the username.
         /// </summary>
         public string? Username { get; init; }

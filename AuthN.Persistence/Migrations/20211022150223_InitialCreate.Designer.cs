@@ -10,9 +10,12 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AuthN.Persistence.Migrations
 {
     [DbContext(typeof(AuthNDbContext))]
-    [Migration("20211021093901_InitialCreate")]
+    [Migration("20211022150223_InitialCreate")]
     partial class InitialCreate
     {
+        /// <summary>
+        /// Builds the target model.
+        /// </summary>
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
@@ -57,9 +60,9 @@ namespace AuthN.Persistence.Migrations
 
             modelBuilder.Entity("AuthN.Domain.Models.Storage.AuthNUser", b =>
                 {
-                    b.Property<int>("UserId")
+                    b.Property<long>("UserId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("bigint")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<DateTime?>("ActivatedOn")
@@ -125,14 +128,14 @@ namespace AuthN.Persistence.Migrations
                     b.Property<int>("PrivilegesPrivilegeId")
                         .HasColumnType("int");
 
-                    b.Property<int>("UsersUserId")
-                        .HasColumnType("int");
+                    b.Property<long>("UsersUserId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("PrivilegesPrivilegeId", "UsersUserId");
 
                     b.HasIndex("UsersUserId");
 
-                    b.ToTable("AuthNPrivilegeAuthNUser");
+                    b.ToTable("UsersPrivileges");
                 });
 
             modelBuilder.Entity("AuthNPrivilegeAuthNUser", b =>

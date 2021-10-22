@@ -93,7 +93,7 @@ namespace AuthN.IntegrationTests.Endpoints
             {
                 ActivationCode = ActivateeUser.ActivationCode!.Value,
                 Email = ActivateeUser.RegisteredEmail,
-                Username = ActivateeUser.Username,
+                Username = ActivateeUser.Username!,
             };
 
             // Act

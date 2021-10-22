@@ -25,12 +25,10 @@
             const headers = { 'Content-Type': 'application/json' };
             const response = await fetch(url, { method: 'post', body, headers });
             const json = await response.json();
-            console.log(response.status, json);
-
-            // if (response.ok) {
-            //   console.log('REG OK - STORE TOKEN!');
-            //   location = '/members';
-            // }
+            if (response.ok) {
+              localStorage.setItem('token', json.token);
+              return location = '/members';
+            }
           }
         });
       });
@@ -49,13 +47,13 @@
         <input type="hidden" name="checksum"/>
       </div>
       <div>
-        <input type="email" name="email" readonly/>
+        <input type="email" name="email" readonly placeholder="email"/>
       </div>
       <div>
-        <input type="text" name="forename" required pattern=".{2,50}"/>
+        <input type="text" name="forename" required pattern=".{2,50}" placeholder="forename"/>
       </div>
       <div>
-        <input type="text" name="surname" required pattern=".{2,50}"/>
+        <input type="text" name="surname" required pattern=".{2,50}" placeholder="surname"/>
       </div>
       <div>
         <input type="date" name="dateOfBirth" required/>

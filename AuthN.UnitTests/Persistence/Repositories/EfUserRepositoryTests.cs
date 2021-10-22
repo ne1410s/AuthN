@@ -72,7 +72,7 @@ namespace AuthN.UnitTests.Persistence.Repositories
             var sut = new EfUserRepository(db);
 
             // Act
-            await sut.ActivateAsync(user.Username);
+            await sut.ActivateAsync(user.Username!);
 
             // Assert
             var dbUser = db.Users.Single(u => u.Username == user.Username);
@@ -89,7 +89,7 @@ namespace AuthN.UnitTests.Persistence.Repositories
             var sut = new EfUserRepository(db);
 
             // Act
-            await sut.ActivateAsync(user.Username);
+            await sut.ActivateAsync(user.Username!);
 
             // Assert
             var dbUser = db.Users.Single(u => u.Username == user.Username);
@@ -166,7 +166,7 @@ namespace AuthN.UnitTests.Persistence.Repositories
             var sut = new EfUserRepository(db);
 
             // Act
-            var result = await sut.FindByUsernameAsync(existingUser.Username);
+            var result = await sut.FindByUsernameAsync(existingUser.Username!);
 
             // Assert
             result.Should().NotBeNull();

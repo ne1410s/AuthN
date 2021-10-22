@@ -79,7 +79,7 @@ namespace AuthN.Domain.Services.Security
             var claims = new List<Claim>()
             {
                 new Claim(JwtRegisteredClaimNames.Iss, issuer),
-                new Claim(JwtRegisteredClaimNames.Sub, user.Username),
+                new Claim(JwtRegisteredClaimNames.Sub, $"{user.UserId}"),
                 new Claim(JwtRegisteredClaimNames.Email, user.RegisteredEmail),
                 new Claim(JwtRegisteredClaimNames.Jti, $"{Guid.NewGuid()}"),
                 new Claim(JwtRegisteredClaimNames.GivenName, user.Forename),

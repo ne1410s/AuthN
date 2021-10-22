@@ -6,9 +6,24 @@
     <title>Members</title>
     <link rel="stylesheet" href="../style.css" />
     <script src="../main.js"></script>
+    <script>
+      window.addEventListener('load', () => {
+
+        const token = localStorage.getItem('token');
+        const tokenIsValid = !!token; // TODO!!
+        if (tokenIsValid) { console.log(token); }
+        else { return location = '/login'; }
+
+        document.querySelector('#btnLogout').addEventListener('click', () => {
+          localStorage.removeItem('token');
+          return location = '/login';
+        });
+      });
+    </script>
   </head>
   <body>
     <h3>Members</h3>
     <p>Text goes here, bro.</p>
+    <input type="button" id="btnLogout" value="Log out"/>
   </body>
 </html>

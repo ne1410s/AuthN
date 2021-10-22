@@ -55,9 +55,9 @@ namespace AuthN.Persistence.Migrations
 
             modelBuilder.Entity("AuthN.Domain.Models.Storage.AuthNUser", b =>
                 {
-                    b.Property<int>("UserId")
+                    b.Property<long>("UserId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("bigint")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<DateTime?>("ActivatedOn")
@@ -123,14 +123,14 @@ namespace AuthN.Persistence.Migrations
                     b.Property<int>("PrivilegesPrivilegeId")
                         .HasColumnType("int");
 
-                    b.Property<int>("UsersUserId")
-                        .HasColumnType("int");
+                    b.Property<long>("UsersUserId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("PrivilegesPrivilegeId", "UsersUserId");
 
                     b.HasIndex("UsersUserId");
 
-                    b.ToTable("AuthNPrivilegeAuthNUser");
+                    b.ToTable("UsersPrivileges");
                 });
 
             modelBuilder.Entity("AuthNPrivilegeAuthNUser", b =>

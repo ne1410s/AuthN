@@ -158,6 +158,12 @@ namespace AuthN.Api.Controllers
             };
         }
 
+        /// <summary>
+        /// Applies previously-issued registration data to simultaneously add a
+        /// new user and return a token.
+        /// </summary>
+        /// <param name="req">The request.</param>
+        /// <returns>Login data.</returns>
         [HttpPost]
         [Route("register")]
         public async Task<LoginSuccess> Register(OAuthRegistrationRequest req)
@@ -185,19 +191,11 @@ namespace AuthN.Api.Controllers
             return newUser.Tokenise(tokenSeconds, jwtIssuer, jwtSecret);
         }
 
-        [Authorize]
-        [HttpGet]
-        [Route("testlol")]
-        public void TestLol()
-        {
-
-        }
-
         private class FacebookUserData
         {
             [JsonPropertyName("id")]
             public string Id { get; set; } = default!;
-            
+
             [JsonPropertyName("email")]
             public string Email { get; set; } = default!;
 
@@ -217,7 +215,7 @@ namespace AuthN.Api.Controllers
                 DateTimeStyles.None);
         }
 
-        private string GetChecksum(string providerId, string email)
+        private static string GetChecksum(string providerId, string email)
         {
             var payload = providerId + email + SigningKey;
             var bytes = Encoding.UTF8.GetBytes(payload);

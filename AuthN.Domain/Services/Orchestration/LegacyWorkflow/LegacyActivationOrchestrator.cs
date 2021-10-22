@@ -65,7 +65,7 @@ namespace AuthN.Domain.Services.Orchestration.LegacyWorkflow
                 throw new OrchestrationException("Activation code expired.");
             }
 
-            await userRepo.ActivateAsync(user.Username);
+            await userRepo.ActivateAsync(user.Username!);
         }
     }
 }

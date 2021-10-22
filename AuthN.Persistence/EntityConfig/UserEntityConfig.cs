@@ -12,9 +12,7 @@ namespace AuthN.Persistence.EntityConfig
         /// <inheritdoc/>
         public void Configure(EntityTypeBuilder<AuthNUser> builder)
         {
-            builder.Property<int>("UserId").ValueGeneratedOnAdd();
-            builder.HasKey("UserId");
-
+            builder.HasKey(r => r.UserId);
             builder.HasIndex(r => r.Username).IsUnique();
             builder.HasIndex(r => r.RegisteredEmail).IsUnique();
 
@@ -29,7 +27,8 @@ namespace AuthN.Persistence.EntityConfig
             builder.Property(r => r.FacebookId).HasMaxLength(50);
 
             // Many-to-many: an implicit "pure" join table is created
-            builder.HasMany(r => r.Privileges).WithMany(p => p.Users);
+            builder.HasMany(r => r.Privileges).WithMany(p => p.Users)
+                .UsingEntity(join => join.ToTable("UsersPrivileges"));
         }
     }
 }
