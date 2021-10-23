@@ -47,6 +47,7 @@ namespace AuthN.Domain.Services.Orchestration.LegacyWorkflow
 
             var user = await AssertUserMatch(request);
             AssertHashMatch(request.Password, user);
+            AssertValidState(user);
 
             var durationSeconds = (uint?)request.Duration ?? defaultTokenSecs;
             return user.Tokenise(durationSeconds, jwtIssuer, jwtSecret);
@@ -67,6 +68,14 @@ namespace AuthN.Domain.Services.Orchestration.LegacyWorkflow
             if (incoming != user.PasswordHash)
             {
                 throw new OrchestrationException("Invalid password");
+            }
+        }
+
+        private static void AssertValidState(AuthNUser user)
+        {
+            if (user.ActivatedOn == null)
+            {
+                throw new DataStateException("User not activated");
             }
         }
     }

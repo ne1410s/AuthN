@@ -60,7 +60,8 @@ namespace AuthN.Api
             {
                 options.AddDefaultPolicy(builder => builder
                     .WithOrigins(Configuration["AllowedHosts"])
-                    .WithHeaders("Content-Type"));
+                    .WithHeaders("Content-Type")
+                    .WithMethods("*"));
             });
 
             services.AddControllers()

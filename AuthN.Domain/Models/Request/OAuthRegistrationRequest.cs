@@ -15,12 +15,6 @@ namespace AuthN.Domain.Models.Request
         public string ProviderId { get; init; } = default!;
 
         /// <summary>
-        /// Gets the provider access code.
-        /// </summary>
-        [Required]
-        public string ProviderCode { get; init; } = default!;
-
-        /// <summary>
         /// Gets the email.
         /// </summary>
         [Required]

@@ -16,18 +16,50 @@
           (form[key] ?? {}).value = value;
         }
 
+        const isProvider = !!form.checksum.value;
+        const controller = isProvider ? 'fb-auth' : 'l-auth';
+        const legacyInputs = q2a('input.legacy');
+        if (isProvider) {
+          document.querySelector('#txtEmail').setAttribute('readonly', '');
+          legacyInputs.forEach(el => el.style.display = 'none');
+        } else {
+          legacyInputs.forEach(el => el.setAttribute('required', ''));
+        }        
+
         form.addEventListener('submit', async event => {
           event.preventDefault();
           if (form.checkValidity()) {
-            const url = 'https://localhost:44357/fb-auth/register';
+            const url = `https://localhost:44357/${controller}/register`;
             const params = new URLSearchParams(new FormData(form));
             const body = JSON.stringify(Object.fromEntries(params.entries()));
             const headers = { 'Content-Type': 'application/json' };
             const response = await fetch(url, { method: 'post', body, headers });
             const json = await response.json();
             if (response.ok) {
-              localStorage.setItem('token', json.token);
-              return location = '/members';
+              if (isProvider) {
+                localStorage.setItem('token', json.token);
+                return location = '/members';
+              } else {
+                const regParams = { 
+                  email: form.email.value,
+                  username: form.username.value,
+                  activationCode: json.activationCode,
+                };
+                const btnSimulateActivation = document.createElement('input');
+                btnSimulateActivation.setAttribute('type', 'button');
+                btnSimulateActivation.setAttribute('value', 'Simulate Activation!');
+                btnSimulateActivation.addEventListener('click', async () => {
+                  const body2 = JSON.stringify(regParams);
+                  const headers2 = { 'Content-Type': 'application/json' };
+                  const url2 = 'https://localhost:44357/l-auth/activate';
+                  const response2 = await fetch(url2, { method: 'put', body: body2, headers: headers2 });
+                  const json2 = await response2.json();
+                  if (response2.ok) {
+                    return location = '/login?username=' + regParams.username;
+                  }
+                });
+                document.body.append(btnSimulateActivation);
+              }
             }
           }
         });
@@ -38,16 +70,19 @@
     <h3>Register</h3>
     <form>
       <div>
-        <input type="hidden" name="providerCode"/>
-      </div>
-      <div>
         <input type="hidden" name="providerId"/>
       </div>
       <div>
         <input type="hidden" name="checksum"/>
       </div>
       <div>
-        <input type="email" name="email" readonly placeholder="email"/>
+        <input type="text" class="legacy" name="username" pattern=".{6,}" placeholder="username"/>
+      </div>
+      <div>
+        <input type="password" class="legacy" name="password" pattern=".{8,}" placeholder="password"/>
+      </div>
+      <div>
+        <input type="email" id="txtEmail" name="email" required placeholder="email"/>
       </div>
       <div>
         <input type="text" name="forename" required pattern=".{2,50}" placeholder="forename"/>
